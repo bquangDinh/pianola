@@ -1,6 +1,7 @@
 import style from "./style.module.scss";
 import { useBoundStore } from "@src/store";
 import { CLEFS, SCALES } from "@src/store/settings";
+import { useEffect, useState } from "react";
 
 export type Props = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLDivElement>,
@@ -8,18 +9,48 @@ export type Props = React.DetailedHTMLProps<
 >;
 
 export function Settings(props: Props) {
-  const { scaleIndex, setScaleIndex, revertMotion, setRevertMotion, clef, setClef } = useBoundStore();
+  const {
+    scaleIndex,
+    setScaleIndex,
+    revertMotion,
+    setRevertMotion,
+    clef,
+    setClef,
+    speedFactor,
+    setSpeedFactor,
+    googleSheetID,
+    setGoogleSheetID,
+    midiInput,
+  } = useBoundStore();
+
+  const [speedFactorStr, setSpeedFactorStr] = useState('')
+
+  useEffect(() => {
+    try {
+        setSpeedFactor(Number.parseFloat(speedFactorStr))
+    } catch {
+        //
+    }
+  }, [speedFactorStr])
 
   const onScaleClicked = () => {
-    setScaleIndex((scaleIndex + 1) % SCALES.length)
+    setScaleIndex((scaleIndex + 1) % SCALES.length);
   };
 
   const onRevertMotionChanged = (value: boolean) => {
-    setRevertMotion(value)
-  }
+    setRevertMotion(value);
+  };
 
   const onClefChanged = (value: CLEFS) => {
-    setClef(value)
+    setClef(value);
+  };
+
+  const onGoogleIdChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGoogleSheetID(e.target.value);
+  };
+
+  const onSpeedFactorChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSpeedFactorStr(e.target.value)
   }
 
   return (
@@ -55,15 +86,35 @@ export function Settings(props: Props) {
             </span>
             <div className="flex-1">
               <label
-                className={style["option-name"] + ' ' + style["option-radio"] + " text-2xl xl:text-4xl"}
+                className={
+                  style["option-name"] +
+                  " " +
+                  style["option-radio"] +
+                  " text-2xl xl:text-4xl"
+                }
               >
-                <input type="radio" checked={revertMotion} name="revert-motion-radio" onChange={() => onRevertMotionChanged(true)}></input>
+                <input
+                  type="radio"
+                  checked={revertMotion}
+                  name="revert-motion-radio"
+                  onChange={() => onRevertMotionChanged(true)}
+                ></input>
                 <span>Yes</span>
               </label>
               <label
-                className={style["option-name"] + ' ' + style["option-radio"] + " text-2xl xl:text-4xl ml-3"}
+                className={
+                  style["option-name"] +
+                  " " +
+                  style["option-radio"] +
+                  " text-2xl xl:text-4xl ml-3"
+                }
               >
-                <input type="radio" checked={!revertMotion} name="revert-motion-radio" onChange={() => onRevertMotionChanged(false)}></input>
+                <input
+                  type="radio"
+                  checked={!revertMotion}
+                  name="revert-motion-radio"
+                  onChange={() => onRevertMotionChanged(false)}
+                ></input>
                 <span>No</span>
               </label>
             </div>
@@ -79,9 +130,20 @@ export function Settings(props: Props) {
               Speed factor:&emsp;
             </span>
             <div className="flex-1">
-              <span className={style["option-name"] + " text-2xl xl:text-4xl"}>
-                1
-              </span>
+              <label>
+                <input
+                  type="text"
+                  placeholder="Enter"
+                  className={
+                    style["option-name"] +
+                    " " +
+                    style["option-input"] +
+                    " text-2xl xl:text-4xl"
+                  }
+                  value={speedFactorStr}
+                  onChange={onSpeedFactorChanged}
+                ></input>
+              </label>
             </div>
           </div>
         </div>
@@ -95,24 +157,54 @@ export function Settings(props: Props) {
               Clef:&emsp;
             </span>
             <div className="flex-1">
-                <label
-                    className={style["option-name"] + ' ' + style["option-radio"] + " text-2xl xl:text-4xl"}
-                >
-                    <input type="radio" checked={clef == CLEFS.TREBLE} name="clef-radio" onChange={() => onClefChanged(CLEFS.TREBLE)}></input>
-                    <span>Treble</span>
-                </label>
-                <label
-                    className={style["option-name"] + ' ' + style["option-radio"] + " text-2xl xl:text-4xl ml-3"}
-                >
-                    <input type="radio" checked={clef == CLEFS.BASS} name="clef-radio" onChange={() => onClefChanged(CLEFS.BASS)}></input>
-                    <span>Bass</span>
-                </label>
-                <label
-                    className={style["option-name"] + ' ' + style["option-radio"] + " text-2xl xl:text-4xl ml-3"}
-                >
-                    <input type="radio" checked={clef == CLEFS.BOTH} name="clef-radio" onChange={() => onClefChanged(CLEFS.BOTH)}></input>
-                    <span>Both</span>
-                </label>
+              <label
+                className={
+                  style["option-name"] +
+                  " " +
+                  style["option-radio"] +
+                  " text-2xl xl:text-4xl"
+                }
+              >
+                <input
+                  type="radio"
+                  checked={clef == CLEFS.TREBLE}
+                  name="clef-radio"
+                  onChange={() => onClefChanged(CLEFS.TREBLE)}
+                ></input>
+                <span>Treble</span>
+              </label>
+              <label
+                className={
+                  style["option-name"] +
+                  " " +
+                  style["option-radio"] +
+                  " text-2xl xl:text-4xl ml-3"
+                }
+              >
+                <input
+                  type="radio"
+                  checked={clef == CLEFS.BASS}
+                  name="clef-radio"
+                  onChange={() => onClefChanged(CLEFS.BASS)}
+                ></input>
+                <span>Bass</span>
+              </label>
+              <label
+                className={
+                  style["option-name"] +
+                  " " +
+                  style["option-radio"] +
+                  " text-2xl xl:text-4xl ml-3"
+                }
+              >
+                <input
+                  type="radio"
+                  checked={clef == CLEFS.BOTH}
+                  name="clef-radio"
+                  onChange={() => onClefChanged(CLEFS.BOTH)}
+                ></input>
+                <span>Both</span>
+              </label>
             </div>
           </div>
         </div>
@@ -126,9 +218,20 @@ export function Settings(props: Props) {
               Google Sheet ID:&emsp;
             </span>
             <div className="flex-1">
-              <span className={style["option-name"] + " text-2xl xl:text-4xl"}>
-                Treble
-              </span>
+              <label>
+                <input
+                  type="text"
+                  placeholder="Enter"
+                  className={
+                    style["option-name"] +
+                    " " +
+                    style["option-input"] +
+                    " text-2xl xl:text-4xl"
+                  }
+                  value={googleSheetID}
+                  onChange={onGoogleIdChanged}
+                ></input>
+              </label>
             </div>
           </div>
         </div>
@@ -143,7 +246,7 @@ export function Settings(props: Props) {
             </span>
             <div className="flex-1">
               <span className={style["option-name"] + " text-2xl xl:text-4xl"}>
-                Treble
+                {midiInput}
               </span>
             </div>
           </div>

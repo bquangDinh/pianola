@@ -21,8 +21,8 @@ export interface GameSettings {
     speedFactor: number,
     setSpeedFactor: (speedFactor: number) => void,
 
-    googleSheetID: string | null,
-    setGoogleSheetID: (googleSheetID: string | null) => void,
+    googleSheetID: string,
+    setGoogleSheetID: (googleSheetID: string) => void,
 
     revertMotion: boolean,
     setRevertMotion: (revertMotion: boolean) => void,
@@ -46,8 +46,8 @@ export const createGameSettingsSlice: StateCreator<
     speedFactor: 1,
     setSpeedFactor: (speedFactor: number) => set(() => ({ speedFactor })),
 
-    googleSheetID: null,
-    setGoogleSheetID: (googleSheetID: string | null) => set(() => ({ googleSheetID })),
+    googleSheetID: '',
+    setGoogleSheetID: (googleSheetID: string) => set(() => ({ googleSheetID })),
 
     revertMotion: false,
     setRevertMotion: (revertMotion: boolean) => set(() => ({ revertMotion })),
