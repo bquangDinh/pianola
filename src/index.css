@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "Vidaloka", serif;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  background-color: #F2F2F2;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: #262626;
+  text-decoration: underline;
+}
+
+* {
+  box-sizing: border-box;
+}

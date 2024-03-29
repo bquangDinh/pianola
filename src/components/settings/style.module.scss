@@ -1,0 +1,38 @@
+.settings {
+    padding: 20px 50px 20px 50px;
+
+    .setting-option {
+        .hint {
+            color: #f2f2f2c2;
+        }
+
+        .option-name {
+            color: #F2F2F2;
+        }
+    }
+
+    #scale-option {
+        cursor: pointer;
+        transition: color .3s;
+
+        &:hover {
+            color: darken(#F2F2F2, 20%);
+        }
+    }
+
+    .option-radio {
+        span {
+            opacity: 0.5;
+            transition: opacity .3s;
+            cursor: pointer;
+        }
+
+        input {
+            display: none;
+
+            &:checked ~ span {
+                opacity: 1;
+            }
+        }
+    }
+}
