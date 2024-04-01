@@ -20,13 +20,14 @@ export interface GameStates {
     setStatus: (status: GameStatuses) => void,
 
     hitsCount: number,
-    increaseHitsCount: () => void,
+    increaseHitsCount: (hitTime: number) => void,
 
     missesCount: number,
     increaseMissesCount: () => void,
 
     averageTiming: number | null,
-    setAverageTiming: (averageTiming: number | null) => void,
+    // setAverageTiming: (averageTiming: number | null) => void,
+    // recalAverageTimingAfterTrial: (timing: number) => void,
 
     keysPerformance: KeysPerformance,
     setKeysPerformance: (key: string, stat: KeyStat) => void,
@@ -45,13 +46,30 @@ export const createGameStatesSlice: StateCreator<
     setStatus: (status: GameStatuses) => set(() => ({ status })),
 
     hitsCount: 0,
-    increaseHitsCount: () => set((state) => ({ hitsCount: state.hitsCount + 1 })),
+    increaseHitsCount: (hitTime: number) => set((state) => {
+        const totalHitTimes = state.hitsCount + 1
+
+        if (state.averageTiming === null) {
+            return {
+                averageTiming: hitTime,
+                hitsCount: totalHitTimes
+            }
+        }
+
+        const oldAvg = state.averageTiming
+
+        const newAvg = oldAvg + ((hitTime - oldAvg) / totalHitTimes)
+
+        return {
+            averageTiming: newAvg,
+            hitsCount: totalHitTimes
+        }
+    }),
 
     missesCount: 0,
     increaseMissesCount: () => set((state) => ({ missesCount: state.missesCount + 1 })),
 
     averageTiming: null,
-    setAverageTiming: (averageTiming: number | null) => set(() => ({ averageTiming })),
 
     keysPerformance: {},
     setKeysPerformance: (key: string, stat: KeyStat) => set((state) => ({

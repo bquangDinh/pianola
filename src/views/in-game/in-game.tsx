@@ -1,171 +1,297 @@
-import { useEffect, useReducer, useRef, useState } from 'react'
-import style from './style.module.scss'
-import { GameStat } from '@components/game-stat';
+import { useEffect, useReducer, useRef, useState } from "react";
+import style from "./style.module.scss";
+import { GameStat } from "@components/game-stat";
+import { GAME_EVENTS, Game } from "@src/game/game";
+import { useBoundStore } from "@src/store";
 
 export function InGame() {
-    const MAX_PANE_WIDTH = (document.body.clientWidth / 2) - 100
-    
-    const dragging = useRef(false);
-    const isLeftDragging = useRef(false)
-    const currentMousePosX = useRef<number>()
-    
-    const [leftPaneWidth, handleMouseMoveLeftPane] = useReducer((state: number, event: MouseEvent) => {
-        if (dragging.current && isLeftDragging.current) {
-            const mousePosX = event.movementX
+  const MAX_PANE_WIDTH = document.body.clientWidth / 2 - 100;
 
-            if (typeof currentMousePosX.current === 'undefined') {
-                currentMousePosX.current = mousePosX
-            }
+  const {
+    increaseHitsCount,
+    increaseMissesCount,
+    leftPanelWidth,
+    setLeftPanelWidth,
+    rightPanelWidth,
+    setRightPanelWidth
+  } = useBoundStore();
 
-            const deltaX = mousePosX - currentMousePosX.current
+  const dragging = useRef(false);
 
-            if (state + deltaX >= MAX_PANE_WIDTH) return MAX_PANE_WIDTH
+  const isLeftDragging = useRef(false);
 
-            return state + deltaX
+  const currentMousePosX = useRef<number>();
 
+  const [leftPaneWidth, handleMouseMoveLeftPane] = useReducer(
+    (state: number, event: MouseEvent) => {
+      if (dragging.current && isLeftDragging.current) {
+        const mousePosX = event.movementX;
+
+        if (typeof currentMousePosX.current === "undefined") {
+          currentMousePosX.current = mousePosX;
         }
 
-        return state
-    }, (document.body.clientWidth / 2) - 100)
+        const deltaX = mousePosX - currentMousePosX.current;
 
-    const [rightPaneWidth, handleMouseMoveRightPane] = useReducer((state: number, event: MouseEvent) => {
-        if (dragging.current && !isLeftDragging.current) {
-            const mousePosX = event.movementX
+        if (state + deltaX >= MAX_PANE_WIDTH) return MAX_PANE_WIDTH;
 
-            if (typeof currentMousePosX.current === 'undefined') {
-                currentMousePosX.current = mousePosX
-            }
+        return state + deltaX;
+      }
 
-            const deltaX = currentMousePosX.current - mousePosX
+      return state;
+    },
+    leftPanelWidth === 0 ? document.body.clientWidth / 2 - 100 : leftPanelWidth
+  );
 
-            if (state + deltaX >= MAX_PANE_WIDTH) return MAX_PANE_WIDTH
+  const [rightPaneWidth, handleMouseMoveRightPane] = useReducer(
+    (state: number, event: MouseEvent) => {
+      if (dragging.current && !isLeftDragging.current) {
+        const mousePosX = event.movementX;
 
-            return state + deltaX
-
+        if (typeof currentMousePosX.current === "undefined") {
+          currentMousePosX.current = mousePosX;
         }
 
-        return state
-    }, (document.body.clientWidth / 2) - 100)
+        const deltaX = currentMousePosX.current - mousePosX;
 
-    const leftContainerRef = useRef<HTMLDivElement>(null)
+        if (state + deltaX >= MAX_PANE_WIDTH) return MAX_PANE_WIDTH;
 
-    const midContainerRef = useRef<HTMLDivElement>(null)
+        return state + deltaX;
+      }
 
-    const rightContainerRef = useRef<HTMLDivElement>(null)
+      return state;
+    },
+    rightPanelWidth === 0 ? document.body.clientWidth / 2 - 100 : rightPanelWidth
+  );
 
-    const [gameStatPos, setGameStatPos] = useState<'left' | 'mid' | 'right'>('mid')
+  const leftContainerRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const onMouseUp = () => {
-            dragging.current = false
-        }
+  const midContainerRef = useRef<HTMLDivElement>(null);
 
-        document.addEventListener('mouseup', onMouseUp)
+  const rightContainerRef = useRef<HTMLDivElement>(null);
 
-        document.addEventListener('mousemove', handleMouseMoveLeftPane)
+  const gameCanvasRef = useRef<HTMLCanvasElement>(null);
 
-        document.addEventListener('mousemove', handleMouseMoveRightPane)
+  const gameRef = useRef<Game>();
 
-        return () => {
-            document.removeEventListener('mouseup', onMouseUp)
-            document.removeEventListener('mousemove', handleMouseMoveLeftPane)
-            document.removeEventListener('mousemove', handleMouseMoveRightPane)
-        }
-    }, [])
+  const [gameStatPos, setGameStatPos] = useState<"left" | "mid" | "right">(
+    "mid"
+  );
 
-    useEffect(() => {
-        let resizeObserver: ResizeObserver | null = null
+  useEffect(() => {
+    const onMouseUp = () => {
+      dragging.current = false;
+    };
 
-        if (leftContainerRef.current && midContainerRef.current && rightContainerRef.current) {
-            resizeObserver = new ResizeObserver((event) => {
-                console.log(event[0].contentRect)
-                const rect = event[0].contentRect
+    document.addEventListener("mouseup", onMouseUp);
 
-                const width = rect.width
+    document.addEventListener("mousemove", handleMouseMoveLeftPane);
 
-                // if the middle container getting smaler over a threshold
-                // move the game stat container to either left panel or right panel
-                if (width <= 350) {
-                    if (leftContainerRef.current!.clientWidth >= 350) {
-                        setGameStatPos('left')
-                    } else if (rightContainerRef.current!.clientWidth >= 350) {
-                        setGameStatPos('right')
-                    } else {
-                        throw new Error('Game Stat has no where to go!')
-                    }
-                } else {
-                    setGameStatPos('mid')
-                }
-            })
+    document.addEventListener("mousemove", handleMouseMoveRightPane);
 
-            resizeObserver.observe(midContainerRef.current)
-        }
+    return () => {
+      document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("mousemove", handleMouseMoveLeftPane);
+      document.removeEventListener("mousemove", handleMouseMoveRightPane);
+    };
+  }, []);
 
-        return () => {
-            if (resizeObserver) {
-                resizeObserver.disconnect()
-            }
-        }
-    }, [])
+  useEffect(() => {
+    let resizeObserver: ResizeObserver | null = null;
 
-    const onMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        dragging.current = true
-        currentMousePosX.current = event.movementX
+    if (
+      leftContainerRef.current &&
+      midContainerRef.current &&
+      rightContainerRef.current
+    ) {
+      resizeObserver = new ResizeObserver((event) => {
+        const rect = event[0].contentRect;
 
-        const dataset = event.currentTarget.dataset
+        const width = rect.width;
 
-        if ('direction' in dataset) {
-            isLeftDragging.current = dataset.direction === 'left'
+        // if the middle container getting smaler over a threshold
+        // move the game stat container to either left panel or right panel
+        if (width <= 350) {
+          if (leftContainerRef.current!.clientWidth >= 350) {
+            setGameStatPos("left");
+          } else if (rightContainerRef.current!.clientWidth >= 350) {
+            setGameStatPos("right");
+          } else {
+            throw new Error("Game Stat has no where to go!");
+          }
         } else {
-            throw new Error('Invalid target for draggable!!!')
+          setGameStatPos("mid");
         }
+      });
+
+      resizeObserver.observe(midContainerRef.current);
     }
 
-    return <div className={style['in-game-container'] + ' w-full h-full flex'}>
-        <div className={style['draggable-black-panel']} style={{
-            width: leftPaneWidth
-        }} ref={leftContainerRef}>
-            <div className={style['stat-placeholder']}>
-                {
-                    gameStatPos === 'left' ? <GameStat className='ml-3 mt-3' textColor='#F2F2F2'></GameStat> : <></>
-                }
-            </div>
-            <div data-direction="left" className={style['dashed-line-container']} onMouseDown={onMouseDown}>
-                <svg className={style['dashed-line']} width="1" height="1024" viewBox="0 0 5 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <line x1="2.5" y1="2.5" x2="2.49996" y2="1021.5" stroke="white" strokeWidth="5" strokeLinecap="round" strokeDasharray="10 10"/>
-                </svg>
-            </div>
+    return () => {
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const onGameHitPoint = (note: string, timing: number) => {
+        increaseHitsCount(timing)
+    }
+
+    const onGameMissedPoint = (note: string) => {
+        console.log('Called missed point')
+        increaseMissesCount()
+    }
+
+    if (!gameRef.current && gameCanvasRef.current) {
+      gameRef.current = new Game(gameCanvasRef.current);
+
+      gameRef.current.init();
+
+      gameRef.current.on(GAME_EVENTS.GOT_POINT, onGameHitPoint)
+
+      gameRef.current.on(GAME_EVENTS.MISSED_POINT, onGameMissedPoint)
+
+      gameRef.current.run();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (leftContainerRef.current) {
+        leftContainerRef.current.style.width = leftPanelWidth + 'px'
+    }
+
+    if (rightContainerRef.current) {
+        rightContainerRef.current.style.width = rightPanelWidth + 'px'
+    }
+  }, [leftPanelWidth, rightPanelWidth])
+
+  useEffect(() => {
+    setLeftPanelWidth(leftPaneWidth)
+  }, [leftPaneWidth])
+
+  useEffect(() => {
+    setRightPanelWidth(rightPaneWidth)
+  }, [rightPaneWidth])
+
+  const onMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    dragging.current = true;
+    currentMousePosX.current = event.movementX;
+
+    const dataset = event.currentTarget.dataset;
+
+    if ("direction" in dataset) {
+      isLeftDragging.current = dataset.direction === "left";
+    } else {
+      throw new Error("Invalid target for draggable!!!");
+    }
+  };
+
+  return (
+    <div className={style["in-game-container"] + " w-full h-full flex"}>
+      <div
+        className={style["draggable-black-panel"]}
+        style={{
+          width: leftPaneWidth,
+        }}
+        ref={leftContainerRef}
+      >
+        <div className={style["stat-placeholder"]}>
+          {gameStatPos === "left" ? (
+            <GameStat className="ml-3 mt-3" textColor="#F2F2F2"></GameStat>
+          ) : (
+            <></>
+          )}
         </div>
-        <div className={style['content-container']}>
-            <div className={style['content-stat-placeholder']}>
-                {
-                    gameStatPos === 'mid' ? <GameStat className='ml-3 mt-3'></GameStat> : <></>
-                }
-            </div>
-            <div className={style['main-content'] + ' flex justify-center items-center'} ref={midContainerRef}>
-                <div className={style['staff-container'] + ' w-full'}>
-                    <div className={style['staff']}></div>
-                    <div className={style['staff']}></div>
-                    <div className={style['staff']}></div>
-                    <div className={style['staff']}></div>
-                    <div className={style['staff']}></div>
-                </div>
-            </div>
-            <div className={style['content-stat-placeholder']}></div>
+        <div
+          data-direction="left"
+          className={style["dashed-line-container"]}
+          onMouseDown={onMouseDown}
+        >
+          <svg
+            className={style["dashed-line"]}
+            width="1"
+            height="1024"
+            viewBox="0 0 5 1024"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line
+              x1="2.5"
+              y1="2.5"
+              x2="2.49996"
+              y2="1021.5"
+              stroke="white"
+              strokeWidth="5"
+              strokeLinecap="round"
+              strokeDasharray="10 10"
+            />
+          </svg>
         </div>
-        <div className={style['draggable-black-panel']} style={{
-            width: rightPaneWidth
-        }} ref={rightContainerRef}>
-            <div data-direction="right" className={style['dashed-line-container']} onMouseDown={onMouseDown}>
-                <svg className={style['dashed-line']} width="1" height="1024" viewBox="0 0 5 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <line x1="2.5" y1="2.5" x2="2.49996" y2="1021.5" stroke="white" strokeWidth="5" strokeLinecap="round" strokeDasharray="10 10"/>
-                </svg>
-            </div>
-            <div className={style['stat-placeholder']}>
-                {
-                    gameStatPos === 'right' ? <GameStat className='ml-3 mt-3' textColor='#F2F2F2'></GameStat> : <></>
-                }
-            </div>
+      </div>
+      <div className={style["content-container"]}>
+        <div className={style["content-stat-placeholder"]}>
+          {gameStatPos === "mid" ? (
+            <GameStat className="ml-3 mt-3"></GameStat>
+          ) : (
+            <></>
+          )}
         </div>
+        <div
+          className={
+            style["main-content"] + " flex justify-center items-center"
+          }
+          ref={midContainerRef}
+        >
+          <canvas
+            id="game-content-canvas"
+            className={style["game-canvas"]}
+            ref={gameCanvasRef}
+          ></canvas>
+        </div>
+        <div className={style["content-stat-placeholder"]}></div>
+      </div>
+      <div
+        className={style["draggable-black-panel"]}
+        style={{
+          width: rightPaneWidth,
+        }}
+        ref={rightContainerRef}
+      >
+        <div
+          data-direction="right"
+          className={style["dashed-line-container"]}
+          onMouseDown={onMouseDown}
+        >
+          <svg
+            className={style["dashed-line"]}
+            width="1"
+            height="1024"
+            viewBox="0 0 5 1024"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line
+              x1="2.5"
+              y1="2.5"
+              x2="2.49996"
+              y2="1021.5"
+              stroke="white"
+              strokeWidth="5"
+              strokeLinecap="round"
+              strokeDasharray="10 10"
+            />
+          </svg>
+        </div>
+        <div className={style["stat-placeholder"]}>
+          {gameStatPos === "right" ? (
+            <GameStat className="ml-3 mt-3" textColor="#F2F2F2"></GameStat>
+          ) : (
+            <></>
+          )}
+        </div>
+      </div>
     </div>
+  );
 }

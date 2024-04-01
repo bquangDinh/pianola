@@ -3,6 +3,8 @@ import { Footer } from '@components/footer'
 import style from './style.module.scss'
 import { Settings } from '@components/settings';
 import { PlayBtn } from '@components/play-btn';
+import { MidiController } from '@src/game/midi-controller';
+import { useBoundStore } from '@src/store';
 
 export function PreGame() {
     const [content, setContent] = useState<'idle' | 'about' | 'settings'>('idle');
@@ -10,6 +12,8 @@ export function PreGame() {
     const [playBtnSize, setPlayBtnSize] = useState<number>();
 
     const playBtnContainerRef = useRef<HTMLDivElement>(null);
+
+    const { setMidiInput } = useBoundStore()
 
     useEffect(() => {
         // when DOMs are mounted
@@ -32,6 +36,13 @@ export function PreGame() {
         }
     }, [])
 
+    useEffect(() => {
+        // when DOMs are mounted
+        MidiController.init().then(() => {
+            setMidiInput(MidiController.getPrimaryInputName())
+        })
+    }, [])
+
     const onSettingsClicked = () => {
         setContent('settings');
     }
@@ -48,7 +59,7 @@ export function PreGame() {
         <div className={style['mid-container']}>
             <div className={style['black-ribbon'] + ' h-4/5 grid grid-cols-4 grid-rows-4'}>
                 <div className="col-start-2 col-span-2 row-start-1 row-span-1 flex justify-center items-center">
-                    <h2 className='text-4xl xl:text-6xl'>Settings</h2>
+                    <h2 className={style['ribbon-title'] + ' text-4xl xl:text-6xl'}>Settings</h2>
                 </div>
                 <div className='col-start-1 col-span-3 row-start-2 row-span-3'>
                     <Settings></Settings>

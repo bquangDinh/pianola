@@ -23,7 +23,7 @@ export function Settings(props: Props) {
     midiInput,
   } = useBoundStore();
 
-  const [speedFactorStr, setSpeedFactorStr] = useState('')
+  const [speedFactorStr, setSpeedFactorStr] = useState(speedFactor.toString())
 
   useEffect(() => {
     try {
@@ -188,22 +188,6 @@ export function Settings(props: Props) {
                   onChange={() => onClefChanged(CLEFS.BASS)}
                 ></input>
                 <span>Bass</span>
-              </label>
-              <label
-                className={
-                  style["option-name"] +
-                  " " +
-                  style["option-radio"] +
-                  " text-2xl xl:text-4xl ml-3"
-                }
-              >
-                <input
-                  type="radio"
-                  checked={clef == CLEFS.BOTH}
-                  name="clef-radio"
-                  onChange={() => onClefChanged(CLEFS.BOTH)}
-                ></input>
-                <span>Both</span>
               </label>
             </div>
           </div>

@@ -4,12 +4,11 @@ import { GameStates } from "./game-state"
 export enum CLEFS {
     TREBLE,
     BASS,
-    BOTH
 }
 
 export const SCALES = [
-    'C Major', 'G Major', 'D Major', 'A Major', 'E Major', 'B Major', 'Gb Major',
-    'Db Major', 'Ab Major', 'Eb Major', 'Bb Major', 'F Major', 'a minor', 'e minor', 
+    'C Major', 'G Major', 'D Major', 'A Major', 'E Major', 'B Major', 'F# Major', 'Gb Major',
+    'Db Major', 'Ab Major', 'Eb Major', 'Bb Major', 'F Major', 'C# Major', 'a minor', 'e minor', 
     'b minor', 'f# minor', 'c# minor', 'g# minor', 'eb minor', 'f minor', 'c minor',
     'g minor', 'd minor'
 ]
@@ -31,7 +30,13 @@ export interface GameSettings {
     setClef: (celf: CLEFS) => void,
 
     midiInput: string | null,
-    setMidiInput: (midiInput: string | null) => void
+    setMidiInput: (midiInput: string | null) => void,
+
+    leftPanelWidth: number,
+    setLeftPanelWidth: (leftPanelWidth: number) => void,
+
+    rightPanelWidth: number
+    setRightPanelWidth: (rightPanelWidth: number) => void,
 }
 
 export const createGameSettingsSlice: StateCreator<
@@ -56,5 +61,11 @@ export const createGameSettingsSlice: StateCreator<
     setClef: (clef: CLEFS) => set(() => ({ clef })),
 
     midiInput: null,
-    setMidiInput: (midiInput: string | null) => set(() => ({ midiInput }))
+    setMidiInput: (midiInput: string | null) => set(() => ({ midiInput })),
+
+    leftPanelWidth: 0,
+    setLeftPanelWidth: (leftPanelWidth: number) => set(() => ({ leftPanelWidth })),
+
+    rightPanelWidth: 0,
+    setRightPanelWidth: (rightPanelWidth: number) => set(() => ({ rightPanelWidth }))
 })
