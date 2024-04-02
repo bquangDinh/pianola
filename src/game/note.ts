@@ -14,7 +14,7 @@ export class Note extends GameObject {
 
     static readonly STAVE_WIDTH = 30
 
-	readonly SPEED = 50
+	readonly SPEED = 100
 
     public speedFactor = 1
 
@@ -110,7 +110,7 @@ export class Note extends GameObject {
         })
 
         console.log(this.noteConfig)
-		
+
 		this.formatter.joinVoices([this.voice]).format([this.voice], Note.STAVE_WIDTH)
 	}
 

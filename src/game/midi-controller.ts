@@ -1,13 +1,8 @@
-import { EventEmitter } from "events";
 import { Input, NoteMessageEvent, WebMidi } from "webmidi";
+import { MIDIInputable, MIDI_EVENTS } from "./midi-inputable";
 
-export const MIDI_EVENTS = {
-	NOTE_ON: 'midi:note_on',
-	NOTE_OFF: 'midi:note_off',
-}
-
-export class MIDIController extends EventEmitter {
-    private primaryInput: Input | null = null
+export class MIDIController extends MIDIInputable {
+    protected primaryInput: Input | null = null
 
     public async init () {
         await WebMidi.enable()
@@ -34,13 +29,13 @@ export class MIDIController extends EventEmitter {
     }
 
     private onNoteOn(e: NoteMessageEvent) {
-        const note = `${e.note.name}${e.note.accidental ?? ''}${e.note.octave}`
+        const note = this.serializeNote(e.note)
 
         this.emit(MIDI_EVENTS.NOTE_ON, note)
     }
-    
+
     private onNoteOff(e: NoteMessageEvent) {
-        const note = `${e.note.name}${e.note.accidental ?? ''}${e.note.octave}`
+		const note = this.serializeNote(e.note)
 
         this.emit(MIDI_EVENTS.NOTE_OFF, note)
     }

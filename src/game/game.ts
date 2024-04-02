@@ -1,9 +1,12 @@
 import { GameObject } from "./game-object";
-import { MIDIController, MIDI_EVENTS, MidiController } from "./midi-controller";
 import { EventEmitter } from 'events'
 import { NotesManager, NotesManagerEvents } from "./notes-manager";
 import { Staff } from "./staff";
 import { isNaN } from "lodash";
+import { MIDIInputable, MIDI_EVENTS } from "./midi-inputable";
+import { MockMidiController } from "./keyboard-controller";
+import { AppConfigs, MIDIControllers } from "@src/configs/app.config";
+import { MidiController } from "./midi-controller";
 
 export const GAME_EVENTS = {
 	/* Game Events */
@@ -13,7 +16,7 @@ export const GAME_EVENTS = {
 }
 
 export class Game extends EventEmitter {
-    private midiController: MIDIController = MidiController
+    private midiController: MIDIInputable = AppConfigs.midiController === MIDIControllers.PIANO ? MidiController : MockMidiController
 
     private notesManager: NotesManager;
 
@@ -48,7 +51,7 @@ export class Game extends EventEmitter {
 		this._canvas.height = this._canvas.clientHeight
 
         this.ctx.imageSmoothingEnabled = true
-        
+
         this.ctx.imageSmoothingQuality = 'high'
 
         this.notesManager = new NotesManager(this)
@@ -88,7 +91,7 @@ export class Game extends EventEmitter {
 
         // 20 is half height of the staff
         // the staff is drawn from the top to bottom
-        staff.setPosition(0, (this.canvas.height / 2) - 20) 
+        staff.setPosition(0, (this.canvas.height / 2) - 20)
 
         staff.init()
 
@@ -96,8 +99,6 @@ export class Game extends EventEmitter {
     }
 
     private onMidiNoteOn(hitNote: string) {
-        console.log('Onnn')
-
         const note = this.notesManager.currentNoteStr
 
         if (!note) return
@@ -111,6 +112,7 @@ export class Game extends EventEmitter {
         this.notesManager.resetNote()
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private onMidiNoteOff(_: string) {
         //
     }
@@ -189,7 +191,7 @@ export class Game extends EventEmitter {
 			this.canvas.height = height
 
             this.ctx.imageSmoothingEnabled = true
-        
+
             this.ctx.imageSmoothingQuality = 'high'
 
 			// Emit resize event

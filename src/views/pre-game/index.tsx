@@ -5,8 +5,11 @@ import { Settings } from '@components/settings';
 import { PlayBtn } from '@components/play-btn';
 import { MidiController } from '@src/game/midi-controller';
 import { useBoundStore } from '@src/store';
+import { AppConfigs, MIDIControllers } from '@src/configs/app.config';
+import { MockMidiController } from '@src/game/keyboard-controller';
 
 export function PreGame() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [content, setContent] = useState<'idle' | 'about' | 'settings'>('idle');
 
     const [playBtnSize, setPlayBtnSize] = useState<number>();
@@ -25,8 +28,8 @@ export function PreGame() {
                 // https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry/contentBoxSize
                 setPlayBtnSize(Math.min(event[0].contentBoxSize[0].inlineSize, event[0].contentBoxSize[0].blockSize))
             });
-    
-            resizeObserver.observe(playBtnContainerRef.current);    
+
+            resizeObserver.observe(playBtnContainerRef.current);
         }
 
         return () => {
@@ -38,15 +41,24 @@ export function PreGame() {
 
     useEffect(() => {
         // when DOMs are mounted
-        MidiController.init().then(() => {
-            setMidiInput(MidiController.getPrimaryInputName())
-        })
+		if (AppConfigs.midiController === MIDIControllers.PIANO) {
+			MidiController.init().then(() => {
+				setMidiInput(MidiController.getPrimaryInputName())
+			})
+		}  else {
+			MockMidiController.init();
+
+			setMidiInput(MockMidiController.getPrimaryInputName())
+		}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onSettingsClicked = () => {
         setContent('settings');
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onAboutClicked = () => {
         setContent('about');
     }

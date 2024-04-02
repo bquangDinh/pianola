@@ -139,8 +139,8 @@ export function InGame() {
         increaseHitsCount(timing)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onGameMissedPoint = (note: string) => {
-        console.log('Called missed point')
         increaseMissesCount()
     }
 
