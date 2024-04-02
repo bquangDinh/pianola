@@ -3,6 +3,7 @@ import style from "./style.module.scss";
 import { GameStat } from "@components/game-stat";
 import { GAME_EVENTS, Game } from "@src/game/game";
 import { useBoundStore } from "@src/store";
+import { GameStatuses } from "@src/store/game-state";
 
 export function InGame() {
   const MAX_PANE_WIDTH = document.body.clientWidth / 2 - 100;
@@ -13,7 +14,10 @@ export function InGame() {
     leftPanelWidth,
     setLeftPanelWidth,
     rightPanelWidth,
-    setRightPanelWidth
+    setRightPanelWidth,
+	increaseKeyHitsCount,
+	increaseKeyMissesCount,
+	setStatus
   } = useBoundStore();
 
   const dragging = useRef(false);
@@ -135,26 +139,57 @@ export function InGame() {
   }, []);
 
   useEffect(() => {
-    const onGameHitPoint = (note: string, timing: number) => {
+    const onGameHitPoint = (key: string, timing: number) => {
+		// Since key also include octave. Its format is for example C#5 or D5
+		// Remove the last letter
+		const keyName = key.slice(0, -1)
+
+		console.log('Key is', keyName)
+
         increaseHitsCount(timing)
+
+		increaseKeyHitsCount(keyName, timing)
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const onGameMissedPoint = (note: string) => {
+    const onGameMissedPoint = (key: string) => {
+		// Since key also include octave. Its format is for example C#5 or D5
+		// Remove the last letter
+		const keyName = key.slice(0, -1)
+
+		console.log('Key is', key, keyName)
+
         increaseMissesCount()
+
+		increaseKeyMissesCount(keyName)
     }
+
+	const onEndGame = () => {
+		setStatus(GameStatuses.ENDED);
+	}
 
     if (!gameRef.current && gameCanvasRef.current) {
-      gameRef.current = new Game(gameCanvasRef.current);
+		gameRef.current = new Game(gameCanvasRef.current);
 
-      gameRef.current.init();
+		gameRef.current.init();
 
-      gameRef.current.on(GAME_EVENTS.GOT_POINT, onGameHitPoint)
+		gameRef.current.on(GAME_EVENTS.GOT_POINT, onGameHitPoint)
 
-      gameRef.current.on(GAME_EVENTS.MISSED_POINT, onGameMissedPoint)
+		gameRef.current.on(GAME_EVENTS.MISSED_POINT, onGameMissedPoint)
 
-      gameRef.current.run();
+		gameRef.current.on(GAME_EVENTS.ENDGAME, onEndGame)
+
+		gameRef.current.run();
     }
+
+	return () => {
+		if (gameRef.current) {
+			gameRef.current.destroy()
+
+			gameRef.current = undefined
+		}
+	}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -169,10 +204,12 @@ export function InGame() {
 
   useEffect(() => {
     setLeftPanelWidth(leftPaneWidth)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leftPaneWidth])
 
   useEffect(() => {
     setRightPanelWidth(rightPaneWidth)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rightPaneWidth])
 
   const onMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

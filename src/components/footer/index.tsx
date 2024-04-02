@@ -7,9 +7,9 @@ export type Props = {
 
 export function Footer({ onAboutCallback, onSettingsCallback }: Props) {
     return <div className={style['footer']}>
-        <a className='text-xl' onClick={onAboutCallback}>What is this</a>
-        <a className='text-xl ml-5' onClick={onSettingsCallback}>Settings</a>
-        <a className='text-xl ml-5'>Github</a>
-        <a className='text-xl ml-5'>Quang Dinh Bui</a>
+        <a className='text-xl cursor-pointer' onClick={onAboutCallback}>What is this</a>
+        <a className='text-xl ml-5 cursor-pointer' onClick={onSettingsCallback}>Settings</a>
+        <a className='text-xl ml-5 cursor-pointer'>Github</a>
+        <a className='text-xl ml-5 cursor-pointer'>Quang Dinh Bui</a>
     </div>
 }

@@ -71,9 +71,9 @@ export class NotesManager extends GameObject {
         this._hitTime += dt
 
         if (this.note.x <= -Note.STAVE_WIDTH) {
-            this.resetNote()
-
             this.emit(NotesManagerEvents.NOTE_HIT_ENDPOINT, this.currentNoteStr)
+
+            this.resetNote()
         }
     }
 

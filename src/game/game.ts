@@ -13,6 +13,7 @@ export const GAME_EVENTS = {
 	RESIZE: 'game:resize',
 	GOT_POINT: 'game:got_point',
 	MISSED_POINT: 'game:missed_point',
+	ENDGAME: 'game:end'
 }
 
 export class Game extends EventEmitter {
@@ -99,6 +100,11 @@ export class Game extends EventEmitter {
     }
 
     private onMidiNoteOn(hitNote: string) {
+		if (hitNote === 'C8' || hitNote === 'C#8') {
+			this.emit(GAME_EVENTS.ENDGAME);
+			return;
+		}
+
         const note = this.notesManager.currentNoteStr
 
         if (!note) return
@@ -175,7 +181,9 @@ export class Game extends EventEmitter {
             obj.destroy()
         }
 
-        this.midiController.destroy()
+		this.gameObjects = []
+
+        // this.midiController.destroy()
 
         this.removeAllListeners()
     }

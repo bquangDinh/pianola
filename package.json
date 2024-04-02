@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@types/events": "^3.0.3",
+    "@types/gapi": "^0.0.47",
     "@types/lodash": "^4.17.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",

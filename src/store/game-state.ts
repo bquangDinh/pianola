@@ -30,10 +30,10 @@ export interface GameStates {
     // recalAverageTimingAfterTrial: (timing: number) => void,
 
     keysPerformance: KeysPerformance,
-    setKeysPerformance: (key: string, stat: KeyStat) => void,
-    increaseKeyHitsCount: (key: string) => void,
+    increaseKeyHitsCount: (key: string, hitTime: number) => void,
     increaseKeyMissesCount: (key: string) => void,
-    setKeyAverageTiming: (key: string, averageTiming: number) => void,
+
+	resetStats: () => void,
 }
 
 export const createGameStatesSlice: StateCreator<
@@ -72,27 +72,37 @@ export const createGameStatesSlice: StateCreator<
     averageTiming: null,
 
     keysPerformance: {},
-    setKeysPerformance: (key: string, stat: KeyStat) => set((state) => ({
-        ...state,
-        keysPerformance: {
-            ...state.keysPerformance,
-            key: stat
-        }
-    })),
-    increaseKeyHitsCount: (key: string) => set((state) => {
+    increaseKeyHitsCount: (key: string, hitTime: number) => set((state) => {
         const keysPerformance = state.keysPerformance
 
+		const totalHitTimes = !(key in keysPerformance) ? 1 : state.keysPerformance[key].hitsCount + 1
+
         if (!(key in keysPerformance)) {
-            throw new Error(`Key ${key} does not exist in KeysPerformance! Cannot update hits count of ${key}`)
+			return {
+				...state,
+				keysPerformance: {
+					...state.keysPerformance,
+					[key]: {
+						hitsCount: totalHitTimes,
+						missesCount: 0,
+						averageTiming: hitTime
+					}
+				}
+			}
         }
+
+		const oldAvg = state.keysPerformance[key].averageTiming
+
+        const newAvg = oldAvg + ((hitTime - oldAvg) / totalHitTimes)
 
         return {
             ...state,
             keysPerformance: {
                 ...state.keysPerformance,
-                key: {
+                [key]: {
                     ...state.keysPerformance[key],
-                    hitsCount: state.keysPerformance[key].hitsCount + 1
+                    hitsCount: totalHitTimes,
+					averageTiming: newAvg,
                 }
             }
         }
@@ -100,37 +110,39 @@ export const createGameStatesSlice: StateCreator<
     increaseKeyMissesCount: (key: string) => set((state) => {
         const keysPerformance = state.keysPerformance
 
+		const totalMissedTimes = !(key in keysPerformance) ? 1 : state.keysPerformance[key].missesCount + 1
+
         if (!(key in keysPerformance)) {
-            throw new Error(`Key ${key} does not exist in KeysPerformance! Cannot update misses count of ${key}`)
+			return {
+				...state,
+				keysPerformance: {
+					...state.keysPerformance,
+					[key]: {
+						hitsCount: 0,
+						missesCount: totalMissedTimes,
+						averageTiming: -1
+					}
+				}
+			}
         }
 
         return {
             ...state,
             keysPerformance: {
                 ...state.keysPerformance,
-                key: {
+                [key]: {
                     ...state.keysPerformance[key],
-                    missesCount: state.keysPerformance[key].hitsCount + 1
+                    missesCount: totalMissedTimes
                 }
             }
         }
     }),
-    setKeyAverageTiming: (key: string, averageTiming: number) => set((state) => {
-        const keysPerformance = state.keysPerformance
 
-        if (!(key in keysPerformance)) {
-            throw new Error(`Key ${key} does not exist in KeysPerformance! Cannot update average timing of ${key}`)
-        }
-
-        return {
-            ...state,
-            keysPerformance: {
-                ...state.keysPerformance,
-                key: {
-                    ...state.keysPerformance[key],
-                    averageTiming
-                }
-            }
-        }
-    })
+	resetStats: () => set((state) => ({
+		...state,
+		hitsCount: 0,
+		missesCount: 0,
+		averageTiming: null,
+		keysPerformance: {}
+	}))
 })

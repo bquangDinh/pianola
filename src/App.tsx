@@ -11,6 +11,7 @@ function App() {
 
   useEffect(() => {
     console.log(status)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return <div className='w-screen h-screen overflow-hidden'>

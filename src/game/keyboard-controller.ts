@@ -35,6 +35,10 @@ export class KeyboardController extends MIDIInputable {
 		'b': ['G', 5],
 		'n': ['A', 5],
 		'm': ['B', 5],
+
+		// terminate key
+		// space key
+		' ': ['C', 8]
 	}
 
 	protected primaryInput: IMidiInput = {
@@ -67,8 +71,6 @@ export class KeyboardController extends MIDIInputable {
 
 			const noteStr = this.serializeNote(note.note)
 
-			console.log('Note on', noteStr)
-
 			this.emit(MIDI_EVENTS.NOTE_ON, noteStr)
 		}
 	}
@@ -88,9 +90,6 @@ export class KeyboardController extends MIDIInputable {
 			}
 
 			const noteStr = this.serializeNote(note.note)
-
-			console.log('Note off', noteStr)
-
 
 			this.emit(MIDI_EVENTS.NOTE_OFF, noteStr)
 		}

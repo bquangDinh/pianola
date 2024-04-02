@@ -31,6 +31,7 @@ export function Settings(props: Props) {
     } catch {
         //
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speedFactorStr])
 
   const onScaleClicked = () => {

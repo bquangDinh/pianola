@@ -9,10 +9,12 @@ export type Props = React.DetailedHTMLProps<
   size?: number;
 };
 
-export function PlayBtn({ className, size, onClick, ...props }: Props) {
-  const { setStatus } = useBoundStore();
+export function PlayBtn({ className, size, ...props }: Props) {
+  const { setStatus, resetStats } = useBoundStore();
 
   const onPlayBtn = () => {
+	resetStats()
+
     setStatus(GameStatuses.PLAYING);
   };
 

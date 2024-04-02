@@ -1,17 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
-import { Footer } from '@components/footer'
+import { useEffect, useRef, useState } from "react";
 import style from './style.module.scss'
-import { Settings } from '@components/settings';
-import { PlayBtn } from '@components/play-btn';
-import { MidiController } from '@src/game/midi-controller';
-import { useBoundStore } from '@src/store';
-import { AppConfigs, MIDIControllers } from '@src/configs/app.config';
-import { MockMidiController } from '@src/game/keyboard-controller';
+import { PlayBtn } from "@components/play-btn";
+import { Settings } from "@components/settings";
+import { Footer } from "@components/footer";
+import { PostGameStat } from "@components/postgame-stat";
 
-export function PreGame() {
-    const [content, setContent] = useState<'idle' | 'about' | 'settings'>('idle');
+export function PostGame() {
 
-    const [playBtnSize, setPlayBtnSize] = useState<number>();
+	const [content, setContent] = useState<'idle' | 'about' | 'settings'>('idle');
+
+	const [playBtnSize, setPlayBtnSize] = useState<number>();
 
     const playBtnContainerRef = useRef<HTMLDivElement>(null);
 
@@ -21,9 +19,7 @@ export function PreGame() {
 		setPlayBtnSize(Math.min(event[0].contentBoxSize[0].inlineSize, event[0].contentBoxSize[0].blockSize))
 	}));
 
-    const { setMidiInput } = useBoundStore()
-
-    useEffect(() => {
+	useEffect(() => {
 		const observer = resizeObserver.current
 
         if (playBtnContainerRef.current) {
@@ -35,21 +31,7 @@ export function PreGame() {
         }
     }, [content])
 
-    useEffect(() => {
-        // when DOMs are mounted
-		if (AppConfigs.midiController === MIDIControllers.PIANO) {
-			MidiController.init().then(() => {
-				setMidiInput(MidiController.getPrimaryInputName())
-			})
-		}  else {
-			MockMidiController.init();
-
-			setMidiInput(MockMidiController.getPrimaryInputName())
-		}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    const onSettingsClicked = () => {
+	const onSettingsClicked = () => {
         setContent('settings');
     }
 
@@ -66,7 +48,10 @@ export function PreGame() {
             <div className={style['black-ribbon'] + ' h-4/5 grid grid-cols-4 grid-rows-4'}>
 				{
 					content === 'idle' ? <>
-						<div ref={playBtnContainerRef} className='col-start-2 col-span-2 row-start-2 row-span-2 flex justify-center'>
+						<div className='col-start-1 col-span-3 row-start-1 row-span-4'>
+							<PostGameStat></PostGameStat>
+						</div>
+						<div ref={playBtnContainerRef} className='col-start-4 col-span-1 row-start-2 row-span-2'>
 							<PlayBtn size={playBtnSize}></PlayBtn>
 						</div>
 					</> : <></>
@@ -74,6 +59,9 @@ export function PreGame() {
 
 				{
 					content === 'settings' ? <>
+						<div className="col-span-1 row-span-1 flex justify-center items-center">
+							<span className="underline cursor-pointer"  onClick={ () => { setContent('idle') } }>{'< '}Back to stat</span>
+						</div>
 						<div className="col-start-2 col-span-2 row-start-1 row-span-1 flex justify-center items-center">
 							<h2 className={style['ribbon-title'] + ' text-4xl xl:text-6xl'}>Settings</h2>
 						</div>
@@ -88,6 +76,9 @@ export function PreGame() {
 
 {
 					content === 'about' ? <>
+						<div className="col-span-1 row-span-1 flex justify-center items-center">
+							<span className="underline cursor-pointer"  onClick={ () => { setContent('idle') } }>{'< '}Back to stat</span>
+						</div>
 						<div className="col-start-2 col-span-2 row-start-1 row-span-1 flex justify-center items-center">
 							<h2 className={style['ribbon-title'] + ' text-4xl xl:text-6xl'}>About</h2>
 						</div>
