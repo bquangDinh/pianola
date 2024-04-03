@@ -9,30 +9,29 @@ import { loadScript } from '@src/helpers/helper'
 import { GoogleSheetHelperIns } from '@src/helpers/google-sheet'
 
 function App() {
-  const { status } = useBoundStore()
+	const { status } = useBoundStore()
 
-  useEffect(() => {
-	const initGoogleSheet = async () => {
-		await GoogleSheetHelperIns.init()
+	useEffect(() => {
+		const initGoogleSheet = async () => {
+			await GoogleSheetHelperIns.init()
 
-		await loadScript('https://apis.google.com/js/api.js')
+			await loadScript('https://apis.google.com/js/api.js')
 
-		GoogleSheetHelperIns.gapiLoaded()
+			GoogleSheetHelperIns.gapiLoaded()
 
-		await loadScript('https://accounts.google.com/gsi/client')
+			await loadScript('https://accounts.google.com/gsi/client')
 
-		GoogleSheetHelperIns.gisLoaded()
-	}
+			GoogleSheetHelperIns.gisLoaded()
+		}
 
-	initGoogleSheet()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+		initGoogleSheet()
+	}, [])
 
-  return <div className='w-screen h-screen overflow-hidden'>
-	{
-		status === GameStatuses.IDLE ? <PreGame></PreGame> : (status === GameStatuses.PLAYING ? <InGame></InGame> : <PostGame></PostGame>)
-	}
-  </div>
+	return <div className='w-screen h-screen overflow-hidden'>
+		{
+			status === GameStatuses.IDLE ? <PreGame></PreGame> : (status === GameStatuses.PLAYING ? <InGame></InGame> : <PostGame></PostGame>)
+		}
+	</div>
 }
 
 export default App

@@ -9,11 +9,11 @@ import { AppConfigs, MIDIControllers } from '@src/configs/app.config';
 import { MockMidiController } from '@src/game/keyboard-controller';
 
 export function PreGame() {
-    const [content, setContent] = useState<'idle' | 'about' | 'settings'>('idle');
+	const [content, setContent] = useState<'idle' | 'about' | 'settings'>('idle');
 
-    const [playBtnSize, setPlayBtnSize] = useState<number>();
+	const [playBtnSize, setPlayBtnSize] = useState<number>();
 
-    const playBtnContainerRef = useRef<HTMLDivElement>(null);
+	const playBtnContainerRef = useRef<HTMLDivElement>(null);
 
 	const resizeObserver = useRef<ResizeObserver>(new ResizeObserver((event) => {
 		// Depending on the layout, you may need to swap inlineSize with blockSize
@@ -21,33 +21,33 @@ export function PreGame() {
 		setPlayBtnSize(Math.min(event[0].contentBoxSize[0].inlineSize, event[0].contentBoxSize[0].blockSize))
 	}));
 
-    const { setMidiInput } = useBoundStore()
+	const { setMidiInput } = useBoundStore()
 
-    useEffect(() => {
+	useEffect(() => {
 		const observer = resizeObserver.current
 
-        if (playBtnContainerRef.current) {
+		if (playBtnContainerRef.current) {
 			observer.observe(playBtnContainerRef.current);
-        }
+		}
 
-        return () => {
-            observer.disconnect()
-        }
-    }, [content])
+		return () => {
+			observer.disconnect()
+		}
+	}, [content])
 
-    useEffect(() => {
-        // when DOMs are mounted
+	useEffect(() => {
+		// when DOMs are mounted
 		if (AppConfigs.midiController === MIDIControllers.PIANO) {
 			MidiController.init().then(() => {
 				setMidiInput(MidiController.getPrimaryInputName())
 			})
-		}  else {
+		} else {
 			MockMidiController.init();
 
 			setMidiInput(MockMidiController.getPrimaryInputName())
 		}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	// useEffect(() => {
 	// 	const loadGoogleApi = async () => {
@@ -57,21 +57,21 @@ export function PreGame() {
 	// 	loadGoogleApi()
 	// }, [])
 
-    const onSettingsClicked = () => {
-        setContent('settings');
-    }
+	const onSettingsClicked = () => {
+		setContent('settings');
+	}
 
-    const onAboutClicked = () => {
-        setContent('about');
-    }
+	const onAboutClicked = () => {
+		setContent('about');
+	}
 
-    return <div className='w-full h-full flex justify-center items-center flex-col'>
-        <div className={style['top-container']}>
-            <h1 className='text-8xl mt-4'>Pianola</h1>
-        </div>
+	return <div className='w-full h-full flex justify-center items-center flex-col'>
+		<div className={style['top-container']}>
+			<h1 className='text-8xl mt-4'>Pianola</h1>
+		</div>
 
-        <div className={style['mid-container']}>
-            <div className={style['black-ribbon'] + ' h-4/5 grid grid-cols-4 grid-rows-4'}>
+		<div className={style['mid-container']}>
+			<div className={style['black-ribbon'] + ' h-4/5 grid grid-cols-4 grid-rows-4'}>
 				{
 					content === 'idle' ? <>
 						<div ref={playBtnContainerRef} className='col-start-2 col-span-2 row-start-2 row-span-2 flex justify-center'>
@@ -94,7 +94,7 @@ export function PreGame() {
 					</> : <></>
 				}
 
-{
+				{
 					content === 'about' ? <>
 						<div className="col-start-2 col-span-2 row-start-1 row-span-1 flex justify-center items-center">
 							<h2 className={style['ribbon-title'] + ' text-4xl xl:text-6xl'}>About</h2>
@@ -107,16 +107,16 @@ export function PreGame() {
 						</div>
 					</> : <></>
 				}
-            </div>
-        </div>
+			</div>
+		</div>
 
-        <div className={style['bottom-container']}>
-            <div className={style['footer-container']}>
-                <Footer
+		<div className={style['bottom-container']}>
+			<div className={style['footer-container']}>
+				<Footer
 					onSettingsCallback={onSettingsClicked}
 					onAboutCallback={onAboutClicked}
 				></Footer>
-            </div>
-        </div>
-    </div>
+			</div>
+		</div>
+	</div>
 }

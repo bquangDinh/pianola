@@ -11,7 +11,7 @@ export function PostGame() {
 
 	const [playBtnSize, setPlayBtnSize] = useState<number>();
 
-    const playBtnContainerRef = useRef<HTMLDivElement>(null);
+	const playBtnContainerRef = useRef<HTMLDivElement>(null);
 
 	const resizeObserver = useRef<ResizeObserver>(new ResizeObserver((event) => {
 		// Depending on the layout, you may need to swap inlineSize with blockSize
@@ -22,30 +22,30 @@ export function PostGame() {
 	useEffect(() => {
 		const observer = resizeObserver.current
 
-        if (playBtnContainerRef.current) {
+		if (playBtnContainerRef.current) {
 			observer.observe(playBtnContainerRef.current);
-        }
+		}
 
-        return () => {
-            observer.disconnect()
-        }
-    }, [content])
+		return () => {
+			observer.disconnect()
+		}
+	}, [content])
 
 	const onSettingsClicked = () => {
-        setContent('settings');
-    }
+		setContent('settings');
+	}
 
-    const onAboutClicked = () => {
-        setContent('about');
-    }
+	const onAboutClicked = () => {
+		setContent('about');
+	}
 
-    return <div className='w-full h-full flex justify-center items-center flex-col'>
-        <div className={style['top-container']}>
-            <h1 className='text-8xl mt-4'>Pianola</h1>
-        </div>
+	return <div className='w-full h-full flex justify-center items-center flex-col'>
+		<div className={style['top-container']}>
+			<h1 className='text-8xl mt-4'>Pianola</h1>
+		</div>
 
-        <div className={style['mid-container']}>
-            <div className={style['black-ribbon'] + ' h-4/5 grid grid-cols-4 grid-rows-4'}>
+		<div className={style['mid-container']}>
+			<div className={style['black-ribbon'] + ' h-4/5 grid grid-cols-4 grid-rows-4'}>
 				{
 					content === 'idle' ? <>
 						<div className='col-start-1 col-span-3 row-start-1 row-span-4'>
@@ -60,7 +60,7 @@ export function PostGame() {
 				{
 					content === 'settings' ? <>
 						<div className="col-span-1 row-span-1 flex justify-center items-center">
-							<span className="underline cursor-pointer"  onClick={ () => { setContent('idle') } }>{'< '}Back to stat</span>
+							<span className="underline cursor-pointer" onClick={() => { setContent('idle') }}>{'< '}Back to stat</span>
 						</div>
 						<div className="col-start-2 col-span-2 row-start-1 row-span-1 flex justify-center items-center">
 							<h2 className={style['ribbon-title'] + ' text-4xl xl:text-6xl'}>Settings</h2>
@@ -74,10 +74,10 @@ export function PostGame() {
 					</> : <></>
 				}
 
-{
+				{
 					content === 'about' ? <>
 						<div className="col-span-1 row-span-1 flex justify-center items-center">
-							<span className="underline cursor-pointer"  onClick={ () => { setContent('idle') } }>{'< '}Back to stat</span>
+							<span className="underline cursor-pointer" onClick={() => { setContent('idle') }}>{'< '}Back to stat</span>
 						</div>
 						<div className="col-start-2 col-span-2 row-start-1 row-span-1 flex justify-center items-center">
 							<h2 className={style['ribbon-title'] + ' text-4xl xl:text-6xl'}>About</h2>
@@ -90,16 +90,16 @@ export function PostGame() {
 						</div>
 					</> : <></>
 				}
-            </div>
-        </div>
+			</div>
+		</div>
 
-        <div className={style['bottom-container']}>
-            <div className={style['footer-container']}>
-                <Footer
+		<div className={style['bottom-container']}>
+			<div className={style['footer-container']}>
+				<Footer
 					onSettingsCallback={onSettingsClicked}
 					onAboutCallback={onAboutClicked}
 				></Footer>
-            </div>
-        </div>
-    </div>
+			</div>
+		</div>
+	</div>
 }

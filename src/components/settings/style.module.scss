@@ -1,59 +1,59 @@
 .settings {
-    padding: 20px 50px 20px 50px;
+  padding: 20px 50px 20px 50px;
 
-    .setting-option {
-        .hint {
-            color: #f2f2f2c2;
-        }
-
-        .option-name {
-            color: #F2F2F2;
-        }
+  .setting-option {
+    .hint {
+      color: #f2f2f2c2;
     }
 
-    #scale-option {
-        cursor: pointer;
-        transition: color .3s;
+    .option-name {
+      color: #f2f2f2;
+    }
+  }
 
-        &:hover {
-            color: darken(#F2F2F2, 20%);
-        }
+  #scale-option {
+    cursor: pointer;
+    transition: color 0.3s;
+
+    &:hover {
+      color: darken(#f2f2f2, 20%);
+    }
+  }
+
+  .option-radio {
+    span {
+      opacity: 0.5;
+      transition: opacity 0.3s;
+      cursor: pointer;
     }
 
-    .option-radio {
-        span {
-            opacity: 0.5;
-            transition: opacity .3s;
-            cursor: pointer;
-        }
+    input {
+      display: none;
 
-        input {
-            display: none;
-
-            &:checked ~ span {
-                opacity: 1;
-            }
-        }
+      &:checked ~ span {
+        opacity: 1;
+      }
     }
+  }
 
-    .option-input {
-        outline: 0;
-        background-color: transparent;
-        border-bottom: 1px solid #141414;
-        width: 150px;
+  .option-input {
+    outline: 0;
+    background-color: transparent;
+    border-bottom: 1px solid #141414;
+    width: 150px;
+  }
+
+  .authorize-gapi-btn {
+    border: 0;
+    outline: 0;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    color: #262626;
+    padding: 5px 10px 5px 10px;
+
+    &:hover {
+      background-color: darken(#f2f2f2, 20%);
     }
-
-	.authorize-gapi-btn {
-		border: 0;
-		outline: 0;
-		background-color: #F2F2F2;
-		border-radius: 5px;
-		transition: background-color .3s;
-		color: #262626;
-		padding: 5px 10px 5px 10px;
-
-		&:hover {
-			background-color: darken(#F2F2F2, 20%);
-		}
-	}
+  }
 }

@@ -1,54 +1,54 @@
 .in-game-container {
-    .draggable-black-panel {
+  .draggable-black-panel {
+    height: 100%;
+    min-width: 50px;
+    background-color: #262626;
+
+    display: flex;
+
+    .stat-placeholder {
+      flex: 1;
+    }
+
+    .dashed-line-container {
+      width: 50px;
+      position: relative;
+
+      .dashed-line {
+        width: 100%;
         height: 100%;
-        min-width: 50px;
-        background-color: #262626;
+        cursor: col-resize;
+        position: absolute;
+      }
 
-        display: flex;
+      &[data-direction="left"] .dashed-line {
+        left: 15px;
+      }
 
-        .stat-placeholder {
-            flex: 1;
-        }
+      &[data-direction="right"] .dashed-line {
+        right: 15px;
+      }
+    }
+  }
 
-        .dashed-line-container {
-            width: 50px;
-            position: relative;
+  .content-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 
-            .dashed-line {
-                width: 100%;
-                height: 100%;
-                cursor: col-resize;
-                position: absolute;
-            }
-
-            &[data-direction="left"] .dashed-line {
-                left: 15px;
-            }
-
-            &[data-direction="right"] .dashed-line {
-                right: 15px;
-            }
-        }
+    .content-stat-placeholder {
+      width: 100%;
+      height: 200px;
     }
 
-    .content-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
+    .main-content {
+      flex: 1;
 
-        .content-stat-placeholder {
-            width: 100%;
-            height: 200px;
-        }
-
-        .main-content {
-            flex: 1;
-
-            .game-canvas {
-                min-width: 200px;
-                width: 100% !important;
-                height: 100%;
-            }
-        }
+      .game-canvas {
+        min-width: 200px;
+        width: 100% !important;
+        height: 100%;
+      }
     }
+  }
 }

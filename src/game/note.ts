@@ -1,170 +1,182 @@
-import { EasyScore, Factory, Formatter, RenderContext, Renderer, RendererBackends, Stave, StemmableNote, Voice } from "vexflow";
+import {
+  EasyScore,
+  Factory,
+  Formatter,
+  RenderContext,
+  Renderer,
+  RendererBackends,
+  Stave,
+  StemmableNote,
+  Voice,
+} from "vexflow";
 import { GameObject } from "./game-object";
 import { Game } from "./game";
 
 export interface NoteConfig {
-    clef: 'treble' | 'bass',
-    note: string,
-    time?: string,
-    stem?: 'up' | 'down',
+  clef: "treble" | "bass";
+  note: string;
+  time?: string;
+  stem?: "up" | "down";
 }
 
 export class Note extends GameObject {
-    protected _id = 'note'
+  protected _id = "note";
 
-    static readonly STAVE_WIDTH = 30
+  static readonly STAVE_WIDTH = 30;
 
-	readonly SPEED = 100
+  readonly SPEED = 100;
 
-    public speedFactor = 1
+  public speedFactor = 1;
 
-	currentTime = 0
+  currentTime = 0;
 
-	formatter: Formatter = new Formatter()
+  formatter: Formatter = new Formatter();
 
-	stave: Stave | null = null
+  stave: Stave | null = null;
 
-	renderer: Renderer | null = null
+  renderer: Renderer | null = null;
 
-	voice: Voice | null = null
+  voice: Voice | null = null;
 
-	score: EasyScore
+  score: EasyScore;
 
-	vexflowCtx: RenderContext | null = null
+  vexflowCtx: RenderContext | null = null;
 
-	noteConfig: NoteConfig | null = null
+  noteConfig: NoteConfig | null = null;
 
-	notes: StemmableNote[] = []
+  notes: StemmableNote[] = [];
 
-	revertMotion = false
+  revertMotion = false;
 
-	constructor(game: Game) {
-		super(game)
+  constructor(game: Game) {
+    super(game);
 
-		const vf = new Factory({
-			renderer: {
-				elementId: game.canvas.id,
-				width: game.canvas.width,
-				height: game.canvas.height
-			}
-		})
+    const vf = new Factory({
+      renderer: {
+        elementId: game.canvas.id,
+        width: game.canvas.width,
+        height: game.canvas.height,
+      },
+    });
 
-		this.score = vf.EasyScore()
-	}
+    this.score = vf.EasyScore();
+  }
 
-    public getSpeed() {
-        return this.speedFactor * this.SPEED
+  public getSpeed() {
+    return this.speedFactor * this.SPEED;
+  }
+
+  public setRevertMotion(revertMotion: boolean) {
+    this.revertMotion = revertMotion;
+  }
+
+  public init(): void | Promise<void> {
+    if (this.hasInitialized) {
+      console.warn(`[${this.id}] has been initialized`);
+      return;
     }
 
-	public setRevertMotion(revertMotion: boolean) {
-		this.revertMotion = revertMotion
-	}
+    this.renderer = new Renderer(this.game.canvas, RendererBackends.CANVAS);
 
-	public init(): void | Promise<void> {
-		if (this.hasInitialized) {
-			console.warn(`[${this.id}] has been initialized`)
-			return
-		}
+    this.vexflowCtx = this.renderer.getContext();
 
-		this.renderer = new Renderer(this.game.canvas, RendererBackends.CANVAS)
+    this._hasInitialized = true;
+  }
 
-		this.vexflowCtx = this.renderer.getContext()
+  public setNoteConfig(noteConfig: NoteConfig) {
+    this.noteConfig = noteConfig;
 
-		this._hasInitialized = true
-	}
+    this.updateStave();
+  }
 
-    public setNoteConfig(noteConfig: NoteConfig) {
-        this.noteConfig = noteConfig
+  public setPosition(x: number, y: number) {
+    super.setPosition(x, y);
 
-        this.updateStave()
+    if (this.stave) {
+      this.stave.setX(x);
+
+      this.stave.setY(y);
+    }
+  }
+
+  private updateStave() {
+    if (!this.vexflowCtx) {
+      throw new Error("You may forgot to initialize note");
     }
 
-    public setPosition(x: number, y: number) {
-        super.setPosition(x, y)
+    if (!this.noteConfig) return;
 
-        if (this.stave) {
-            this.stave.setX(x)
+    const { note, clef, stem, time } = this.noteConfig;
 
-            this.stave.setY(y)
-        }
+    const notes = this.score.notes(note, {
+      stem: stem ?? "up",
+      clef: clef ?? "treble",
+    });
+
+    this.notes = [...notes];
+
+    if (!this.stave) {
+      this.stave = new Stave(this.x, this.y, Note.STAVE_WIDTH);
+
+      this.stave.setContext(this.vexflowCtx);
     }
 
-	private updateStave() {
-        if (!this.vexflowCtx) {
-            throw new Error('You may forgot to initialize note')
-        }
+    this.voice = this.score.voice(notes, {
+      time,
+    });
 
-        if (!this.noteConfig) return
+    console.log(this.noteConfig);
 
-		const { note, clef, stem, time } = this.noteConfig
+    this.formatter
+      .joinVoices([this.voice])
+      .format([this.voice], Note.STAVE_WIDTH);
+  }
 
-		const notes = this.score.notes(note, {
-			stem: stem ?? 'up',
-			clef: clef ?? 'treble'
-		})
-
-		this.notes = [...notes]
-
-        if (!this.stave) {
-            this.stave = new Stave(this.x, this.y, Note.STAVE_WIDTH)
-
-            this.stave.setContext(this.vexflowCtx)
-        }
-
-		this.voice = this.score.voice(notes, {
-            time
-        })
-
-        console.log(this.noteConfig)
-
-		this.formatter.joinVoices([this.voice]).format([this.voice], Note.STAVE_WIDTH)
-	}
-
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public render(_: number): void | Promise<void> {
-        if (!this.vexflowCtx) {
-            throw new Error('You may forgot to initialize note')
-        }
-
-        if (!this.stave || !this.voice) {
-            console.warn('Missing stave')
-            return
-        }
-
-		// this.stave.draw()
-
-		this.voice.draw(this.vexflowCtx, this.stave)
-	}
-
-	public update(dt: number): void | Promise<void> {
-        if (!this.stave) return
-
-		let x = this.stave.getX()
-
-		const canvasRect = this.game.canvas.getBoundingClientRect()
-
-		if (this.revertMotion) {
-			// If the note is not yet on the right of the screen
-			// then move it toward to the right side of the screen
-			if (x <= canvasRect.width) {
-				x += this.speedFactor * this.SPEED * dt
-			}
-		} else {
-			// If the note is not yet on the left of the screen
-			// then move it toward the left of the screen
-			if (x >= -Note.STAVE_WIDTH) {
-				// Move the note from its original position to the left
-				x -= this.speedFactor * this.SPEED * dt
-			}
-		}
-
-		// Update position
-		this.stave.setX(x)
-
-		this.setPosition(x, this.y)
-	}
-
-    public destroy() {
-        //
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public render(_: number): void | Promise<void> {
+    if (!this.vexflowCtx) {
+      throw new Error("You may forgot to initialize note");
     }
+
+    if (!this.stave || !this.voice) {
+      console.warn("Missing stave");
+      return;
+    }
+
+    // this.stave.draw()
+
+    this.voice.draw(this.vexflowCtx, this.stave);
+  }
+
+  public update(dt: number): void | Promise<void> {
+    if (!this.stave) return;
+
+    let x = this.stave.getX();
+
+    const canvasRect = this.game.canvas.getBoundingClientRect();
+
+    if (this.revertMotion) {
+      // If the note is not yet on the right of the screen
+      // then move it toward to the right side of the screen
+      if (x <= canvasRect.width) {
+        x += this.speedFactor * this.SPEED * dt;
+      }
+    } else {
+      // If the note is not yet on the left of the screen
+      // then move it toward the left of the screen
+      if (x >= -Note.STAVE_WIDTH) {
+        // Move the note from its original position to the left
+        x -= this.speedFactor * this.SPEED * dt;
+      }
+    }
+
+    // Update position
+    this.stave.setX(x);
+
+    this.setPosition(x, this.y);
+  }
+
+  public destroy() {
+    //
+  }
 }
