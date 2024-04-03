@@ -26,10 +26,15 @@ The primary goal of this project is pretty simple and straightforward (at least 
 - Save stats of the trial to the given Google Sheet (make sure you make your sheet public and editable by everyone)
 
 ## Previews
+
 ![pre-game](./previews/pre-game.jpeg)
+
 ![settings](./previews/settings.jpeg)
+
 ![in-game](./previews/play.jpeg)
+
 ![post-game](./previews/post-game.jpeg)
+
 ## For devs
 If you want to twist Pianola in your favor, I have a few options
 
