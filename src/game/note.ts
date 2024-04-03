@@ -6,7 +6,7 @@ export interface NoteConfig {
     clef: 'treble' | 'bass',
     note: string,
     time?: string,
-    stem?: 'up' | 'down'
+    stem?: 'up' | 'down',
 }
 
 export class Note extends GameObject {
@@ -36,6 +36,8 @@ export class Note extends GameObject {
 
 	notes: StemmableNote[] = []
 
+	revertMotion = false
+
 	constructor(game: Game) {
 		super(game)
 
@@ -53,6 +55,10 @@ export class Note extends GameObject {
     public getSpeed() {
         return this.speedFactor * this.SPEED
     }
+
+	public setRevertMotion(revertMotion: boolean) {
+		this.revertMotion = revertMotion
+	}
 
 	public init(): void | Promise<void> {
 		if (this.hasInitialized) {
@@ -135,17 +141,27 @@ export class Note extends GameObject {
 
 		let x = this.stave.getX()
 
-		// If the note is not yet on the left of the screen
-		// then move it toward the left of the screen
-		if (x >= -Note.STAVE_WIDTH) {
-			// Move the note from its original position to the left
-			x -= this.speedFactor * this.SPEED * dt
+		const canvasRect = this.game.canvas.getBoundingClientRect()
 
-			// Update position
-			this.stave.setX(x)
-
-			this.setPosition(x, this.y)
+		if (this.revertMotion) {
+			// If the note is not yet on the right of the screen
+			// then move it toward to the right side of the screen
+			if (x <= canvasRect.width) {
+				x += this.speedFactor * this.SPEED * dt
+			}
+		} else {
+			// If the note is not yet on the left of the screen
+			// then move it toward the left of the screen
+			if (x >= -Note.STAVE_WIDTH) {
+				// Move the note from its original position to the left
+				x -= this.speedFactor * this.SPEED * dt
+			}
 		}
+
+		// Update position
+		this.stave.setX(x)
+
+		this.setPosition(x, this.y)
 	}
 
     public destroy() {

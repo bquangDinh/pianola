@@ -19,6 +19,8 @@ export class NotesManager extends GameObject {
 
     private _hitTime = 0
 
+	private revertMotion = false
+
     constructor(game: Game) {
         super(game)
 
@@ -54,11 +56,7 @@ export class NotesManager extends GameObject {
     public init() {
         this.note.init()
 
-        const rect = this.game.canvas.getBoundingClientRect()
-
-        this.note.setPosition(rect.width + Note.STAVE_WIDTH, rect.height / 2 - 60)
-
-        this.updateNote()
+		this.resetNote()
     }
 
     public render(dt: number) {
@@ -70,23 +68,33 @@ export class NotesManager extends GameObject {
 
         this._hitTime += dt
 
-        if (this.note.x <= -Note.STAVE_WIDTH) {
-            this.emit(NotesManagerEvents.NOTE_HIT_ENDPOINT, this.currentNoteStr)
+		const rect = this.game.canvas.getBoundingClientRect()
 
-            this.resetNote()
-        }
+		if (this.revertMotion) {
+			if (this.note.x >= rect.width) {
+				this.emit(NotesManagerEvents.NOTE_HIT_ENDPOINT, this.currentNoteStr)
+
+				this.resetNote()
+			}
+		} else {
+			if (this.note.x <= -Note.STAVE_WIDTH) {
+				this.emit(NotesManagerEvents.NOTE_HIT_ENDPOINT, this.currentNoteStr)
+
+				this.resetNote()
+			}
+		}
     }
 
     public resetNote() {
-        this.resetNotePos()
-
         this.updateNote()
+
+        this.resetNotePos()
 
         this._hitTime = 0
     }
 
     private updateNote() {
-        const { scaleIndex, speedFactor, clef } = useBoundStore.getState()
+        const { scaleIndex, speedFactor, clef, revertMotion } = useBoundStore.getState()
 
         if (scaleIndex < 0 || scaleIndex >= SCALES.length) {
             throw new Error('Scale Index is not supposed to be out of bound')
@@ -102,7 +110,13 @@ export class NotesManager extends GameObject {
 
         this.note.speedFactor = speedFactor
 
-        this.note.setNoteConfig(noteConfig)
+        this.note.setNoteConfig({
+			...noteConfig,
+		})
+
+		this.note.setRevertMotion(revertMotion)
+
+		this.revertMotion = revertMotion
 
         this._currentNoteConfig = noteConfig
     }
@@ -110,7 +124,11 @@ export class NotesManager extends GameObject {
     private resetNotePos() {
         const rect = this.game.canvas.getBoundingClientRect()
 
-        this.note.setPosition(rect.width + Note.STAVE_WIDTH, rect.height / 2 - 60)
+		if (this.revertMotion) {
+			this.note.setPosition(-Note.STAVE_WIDTH, rect.height / 2 - 60)
+		} else {
+			this.note.setPosition(rect.width, rect.height / 2 - 60)
+		}
     }
 
     private generateNoteConfig(scaleConfig: string, clef: CLEFS): NoteConfig {
