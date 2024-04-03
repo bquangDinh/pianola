@@ -7,9 +7,10 @@ import { GoogleSheetHelperIns, ValueInputOptions } from '@src/helpers/google-she
 import { SheetConfigs } from '@src/configs/app.config';
 
 export function PostGameStat() {
-	const { keysPerformance, scaleIndex, hitsCount, missesCount, averageTiming, clef, googleSheetID } = useBoundStore();
+	const { keysPerformance, scaleIndex, hitsCount, missesCount, averageTiming, clef, googleSheetID, gapiAuthorized } = useBoundStore();
 
 	useEffect(() => {
+		if (!gapiAuthorized) return
 		if (googleSheetID === null || googleSheetID.trim() === '') return
 
 		const saveStatsToSheet = async () => {
@@ -28,7 +29,7 @@ export function PostGameStat() {
 
 		saveStatsToSheet()
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [googleSheetID])
+	}, [googleSheetID, gapiAuthorized])
 
 	const renderKeysPerformance = () => {
 		if (Object.keys(keysPerformance).length > 7) {
