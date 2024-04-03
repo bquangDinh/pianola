@@ -20,7 +20,7 @@ export const useBoundStore = create<GameStates & GameSettings>()(
                     clef: state.clef,
                     midiInput: state.midiInput,
                     leftPanelWidth: state.leftPanelWidth,
-                    rightPanelWidth: state.rightPanelWidth
+                    rightPanelWidth: state.rightPanelWidth,
                 })
             }
         )

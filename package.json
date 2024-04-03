@@ -10,6 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
+    "@googleapis/oauth2": "^1.0.5",
+    "@googleapis/sheets": "^5.0.5",
+    "@types/google.accounts": "^0.0.14",
     "events": "^3.3.0",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
@@ -22,6 +26,7 @@
   "devDependencies": {
     "@types/events": "^3.0.3",
     "@types/gapi": "^0.0.47",
+    "@types/gapi.client.sheets-v4": "^0.0.4",
     "@types/lodash": "^4.17.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",

@@ -8,7 +8,7 @@ export enum CLEFS {
 
 export const SCALES = [
     'C Major', 'G Major', 'D Major', 'A Major', 'E Major', 'B Major', 'F# Major', 'Gb Major',
-    'Db Major', 'Ab Major', 'Eb Major', 'Bb Major', 'F Major', 'C# Major', 'a minor', 'e minor', 
+    'Db Major', 'Ab Major', 'Eb Major', 'Bb Major', 'F Major', 'C# Major', 'a minor', 'e minor',
     'b minor', 'f# minor', 'c# minor', 'g# minor', 'eb minor', 'f minor', 'c minor',
     'g minor', 'd minor'
 ]
@@ -37,6 +37,9 @@ export interface GameSettings {
 
     rightPanelWidth: number
     setRightPanelWidth: (rightPanelWidth: number) => void,
+
+	gapiAuthorized: boolean,
+	setGapiAuthorized: (gapiAuthorized: boolean) => void,
 }
 
 export const createGameSettingsSlice: StateCreator<
@@ -67,5 +70,8 @@ export const createGameSettingsSlice: StateCreator<
     setLeftPanelWidth: (leftPanelWidth: number) => set(() => ({ leftPanelWidth })),
 
     rightPanelWidth: 0,
-    setRightPanelWidth: (rightPanelWidth: number) => set(() => ({ rightPanelWidth }))
+    setRightPanelWidth: (rightPanelWidth: number) => set(() => ({ rightPanelWidth })),
+
+	gapiAuthorized: false,
+	setGapiAuthorized: (gapiAuthorized: boolean) => set(() => ({ gapiAuthorized }))
 })

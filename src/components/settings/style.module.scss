@@ -42,4 +42,18 @@
         border-bottom: 1px solid #141414;
         width: 150px;
     }
+
+	.authorize-gapi-btn {
+		border: 0;
+		outline: 0;
+		background-color: #F2F2F2;
+		border-radius: 5px;
+		transition: background-color .3s;
+		color: #262626;
+		padding: 5px 10px 5px 10px;
+
+		&:hover {
+			background-color: darken(#F2F2F2, 20%);
+		}
+	}
 }

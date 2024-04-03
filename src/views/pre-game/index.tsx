@@ -49,6 +49,14 @@ export function PreGame() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+	// useEffect(() => {
+	// 	const loadGoogleApi = async () => {
+	// 		await GoogleSheetHelpers.authorize()
+	// 	}
+
+	// 	loadGoogleApi()
+	// }, [])
+
     const onSettingsClicked = () => {
         setContent('settings');
     }

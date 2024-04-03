@@ -1,10 +1,34 @@
 import style from './style.module.scss'
 import { useBoundStore } from "@src/store";
 import { SCALES_CONFIG } from "@src/constants/scales";
-import { SCALES } from "@src/store/settings";
+import { CLEFS, SCALES } from "@src/store/settings";
+import { useEffect } from 'react';
+import { GoogleSheetHelperIns, ValueInputOptions } from '@src/helpers/google-sheet';
+import { SheetConfigs } from '@src/configs/app.config';
 
 export function PostGameStat() {
-	const { keysPerformance, scaleIndex, hitsCount, missesCount, averageTiming } = useBoundStore();
+	const { keysPerformance, scaleIndex, hitsCount, missesCount, averageTiming, clef, googleSheetID } = useBoundStore();
+
+	useEffect(() => {
+		if (googleSheetID === null || googleSheetID.trim() === '') return
+
+		const saveStatsToSheet = async () => {
+			await GoogleSheetHelperIns.appendValues(googleSheetID, `Sheet1!${SheetConfigs.avgTimingRange}:${SheetConfigs.missesRange}`, [[averageTiming, hitsCount, missesCount]], ValueInputOptions.USER_ENTERED)
+
+			const request: unknown[][] = []
+
+			for (const key in keysPerformance) {
+				const stat = keysPerformance[key]
+
+				request.push([key, stat.hitsCount, stat.missesCount, stat.averageTiming])
+			}
+
+			await GoogleSheetHelperIns.appendValues(googleSheetID, `Sheet1!${SheetConfigs.keyNameRange}:${SheetConfigs.keyAvgTimingRange}`, request, ValueInputOptions.USER_ENTERED)
+		}
+
+		saveStatsToSheet()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [googleSheetID])
 
 	const renderKeysPerformance = () => {
 		if (Object.keys(keysPerformance).length > 7) {
@@ -61,15 +85,11 @@ export function PostGameStat() {
 
 			<div className={style['perkey-stats-container'] + ' mt-10'}>
 				<div className='w-full text-left'>
-					<span className='text-2xl'>Per keys on Treble Clef | D major</span>
+					<span className='text-2xl'>Per keys on { clef === CLEFS.TREBLE ? 'treble' : 'bass' } Clef | { SCALES[scaleIndex] }</span>
 				</div>
 				<div className='grid gap-1 grid-cols-7'>
 					{ renderKeysPerformance() }
 				</div>
-			</div>
-
-			<div className='mt-10'>
-				<span>Stats has been saved to Google Sheet</span>
 			</div>
 		</div>
 	</div>
