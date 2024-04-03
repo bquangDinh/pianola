@@ -5,6 +5,7 @@ import { Note, NoteConfig } from "./note";
 import { DURATIONS, SCALES_CONFIG } from "@src/constants/scales";
 import { CLEFS, SCALES } from "@src/store/settings";
 import { random } from "lodash";
+import { AppConfigs } from "@src/configs/app.config";
 
 export const NotesManagerEvents = {
   NOTE_HIT_ENDPOINT: "nm:note-hit-endpoint",
@@ -139,7 +140,7 @@ export class NotesManager extends GameObject {
 
     const note = notes[random(0, notes.length - 1)];
 
-    const octave = clef === CLEFS.TREBLE ? random(4, 5) : random(3, 4);
+    const octave = clef === CLEFS.TREBLE ? random(AppConfigs.trebleRangeStart, AppConfigs.trebleRangeEnd) : random(AppConfigs.bassRangeStart, AppConfigs.bassRangeEnd);
 
     const [duration, time] = DURATIONS[random(0, DURATIONS.length - 1)];
 

@@ -13,8 +13,6 @@ function App() {
 
 	useEffect(() => {
 		const initGoogleSheet = async () => {
-			await GoogleSheetHelperIns.init()
-
 			await loadScript('https://apis.google.com/js/api.js')
 
 			GoogleSheetHelperIns.gapiLoaded()

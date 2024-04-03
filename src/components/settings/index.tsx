@@ -137,7 +137,7 @@ export function Settings(props: Props) {
 
 				<div className={style["setting-option"] + " col-span-6"}>
 					<span className={style["hint"] + " text-sm xl:text-base"}>
-						Lower or fasten the speed of notes
+						Accelerate or Decelerate the speed
 					</span>
 					<div className="flex">
 						<span className={style["option-name"] + " text-2xl xl:text-4xl"}>
@@ -164,7 +164,7 @@ export function Settings(props: Props) {
 
 				<div className={style["setting-option"] + " col-span-6"}>
 					<span className={style["hint"] + " text-sm xl:text-base"}>
-						Practice on a specific clef or both
+						Practice on a Treble or Bass clef
 					</span>
 					<div className="flex">
 						<span className={style["option-name"] + " text-2xl xl:text-4xl"}>
@@ -209,7 +209,7 @@ export function Settings(props: Props) {
 
 				<div className={style["setting-option"] + " col-span-6"}>
 					<span className={style["hint"] + " text-sm xl:text-base"}>
-						Save stat data into Google Sheet
+						Save stat data to Google Sheet
 					</span>
 					<div className="flex">
 						<span className={style["option-name"] + " text-2xl xl:text-4xl"}>

@@ -1,3 +1,5 @@
+import { GoogleSheetConfigs } from "@src/configs/app.config";
+
 export const ValueInputOptions = {
   USER_ENTERED: "USER_ENTERED",
   RAW: "RAW",
@@ -8,8 +10,6 @@ export class GoogleSheetHelper {
   private tokenClient: google.accounts.oauth2.TokenClient | null = null;
   private _gapiInited = false;
   private _gisInited = false;
-  private clientSecret: Record<string, string | string[]> = {};
-  private _initialized = false;
   private accessToken: string = "";
 
   private static googleSheetInstance: GoogleSheetHelper;
@@ -24,27 +24,6 @@ export class GoogleSheetHelper {
     }
 
     return GoogleSheetHelper.googleSheetInstance;
-  }
-
-  public async init() {
-    if (this.isInitialized) {
-      console.warn("Google Sheet Helper has been initialized");
-      return;
-    }
-
-    const response = await fetch(
-      "/client_secret_596748386175-snk4b1jagpmaq5f6q75ng3l2fj4qilam.apps.googleusercontent.com.json"
-    );
-
-    const clientSecret = await response.json();
-
-    this.clientSecret = clientSecret["web"];
-
-    this._initialized = true;
-  }
-
-  public get isInitialized() {
-    return this._initialized;
   }
 
   public get gapiInited() {
@@ -73,8 +52,8 @@ export class GoogleSheetHelper {
 
   public gisLoaded() {
     this.tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: this.clientSecret["client_id"] as string,
-      scope: "https://www.googleapis.com/auth/spreadsheets",
+      client_id: GoogleSheetConfigs.clientId,
+      scope: GoogleSheetConfigs.scope,
       callback: (e) => {
         this.accessToken = e.access_token;
       },

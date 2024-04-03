@@ -88,7 +88,7 @@ export function PostGameStat() {
 				<div className='w-full text-left'>
 					<span className='text-2xl'>Per keys on {clef === CLEFS.TREBLE ? 'treble' : 'bass'} Clef | {SCALES[scaleIndex]}</span>
 				</div>
-				<div className='grid gap-1 grid-cols-7'>
+				<div className='grid gap-3 grid-cols-7 mt-2'>
 					{renderKeysPerformance()}
 				</div>
 			</div>
