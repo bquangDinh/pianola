@@ -8,9 +8,9 @@ export class MIDIController extends MIDIInputable {
     await WebMidi.enable();
 
     // Print all inputs and outputs
-    WebMidi.inputs.forEach((input) => console.log("[INPUT]", input.name));
+    // WebMidi.inputs.forEach((input) => console.log("[INPUT]", input.name));
 
-    WebMidi.outputs.forEach((output) => console.log("[OUTPUT]", output.name));
+    // WebMidi.outputs.forEach((output) => console.log("[OUTPUT]", output.name));
 
     if (WebMidi.inputs.length === 0) {
       console.warn(
