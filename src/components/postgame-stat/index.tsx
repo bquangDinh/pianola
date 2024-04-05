@@ -57,13 +57,13 @@ export function PostGameStat() {
 		return keysInScale.map((key) => (
 			(key in keysPerformance) ?
 				<div className='col-span-1' key={key}>
-					<span className='text-5xl'>{key}</span>
+					<span className={style['stat-text'] + ' text-5xl'}>{key}</span>
 					<br></br>
-					<span className='text-xl'>{keysPerformance[key].averageTiming.toFixed(2)}</span>
+					<span className={style['stat-text'] + ' text-xl'}>{keysPerformance[key].averageTiming.toFixed(2)}</span>
 					<br></br>
-					<span className='text-xl'>{keysPerformance[key].hitsCount}/{keysPerformance[key].missesCount}</span>
+					<span className={style['stat-text'] + ' text-xl'}>{keysPerformance[key].hitsCount}/{keysPerformance[key].missesCount}</span>
 				</div> : <div className='col-span-1' key={key}>
-					<span className='text-5xl'>{key}</span>
+					<span className={style['stat-text'] + ' text-5xl'}>{key}</span>
 					<br></br>
 				</div>
 		))
@@ -73,20 +73,20 @@ export function PostGameStat() {
 		<div className='float-left h-full flex justify-center flex-col'>
 			<div className={style['performance-stats-container'] + ' grid grid-cols-2'}>
 				<div className='col-span-1'>
-					<span className='text-xl'>Hits/Misses</span>
+					<span className={style['stat-text'] + ' text-xl'}>Hits/Misses</span>
 					<br></br>
-					<span className={style['stat-content'] + ' text-6xl'}>{hitsCount}/{missesCount}</span>
+					<span className={style['stat-text'] + ' text-6xl'}>{hitsCount}/{missesCount}</span>
 				</div>
 				<div className='col-start-2 col-span-1'>
-					<span className='text-xl'>Average Timing</span>
+					<span className={style['stat-text'] + ' text-xl'}>Average Timing</span>
 					<br></br>
-					<span className={style['stat-content'] + ' text-6xl'}>{averageTiming ? averageTiming.toFixed(2) : -1}</span>
+					<span className={style['stat-text'] + ' text-6xl'}>{averageTiming ? averageTiming.toFixed(2) : -1}</span>
 				</div>
 			</div>
 
 			<div className={style['perkey-stats-container'] + ' mt-10'}>
 				<div className='w-full text-left'>
-					<span className='text-2xl'>Per keys on {clef === CLEFS.TREBLE ? 'treble' : 'bass'} Clef | {SCALES[scaleIndex]}</span>
+					<span className={style['stat-text'] + ' text-2xl'}>Per keys on {clef === CLEFS.TREBLE ? 'treble' : 'bass'} Clef | {SCALES[scaleIndex]}</span>
 				</div>
 				<div className='grid gap-3 grid-cols-7 mt-2'>
 					{renderKeysPerformance()}

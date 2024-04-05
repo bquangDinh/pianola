@@ -43,7 +43,7 @@ export class GoogleSheetHelper {
       "https://sheets.googleapis.com/$discovery/rest?version=v4";
 
     await gapi.client.init({
-      apiKey: "AIzaSyAoo_GddjZjkidQiJebnMIsbJ7BD4ihKeY",
+      apiKey: GoogleSheetConfigs.apiKey,
       discoveryDocs: [DISCOVERY_DOC],
     });
 
@@ -55,9 +55,11 @@ export class GoogleSheetHelper {
       client_id: GoogleSheetConfigs.clientId,
       scope: GoogleSheetConfigs.scope,
       callback: (e) => {
-        this.accessToken = e.access_token;
-      },
+        this.accessToken = e.access_token
+        alert('Authorized Google Sheet Services')
+      }
     });
+
     this._gisInited = true;
   }
 

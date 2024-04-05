@@ -60,7 +60,7 @@ export function PostGame() {
 				{
 					content === 'settings' ? <>
 						<div className="col-span-1 row-span-1 flex justify-center items-center">
-							<span className="underline cursor-pointer" onClick={() => { setContent('idle') }}>{'< '}Back to stat</span>
+							<span className="text-white underline cursor-pointer" onClick={() => { setContent('idle') }}>{'< '}Back to stat</span>
 						</div>
 						<div className="col-start-2 col-span-2 row-start-1 row-span-1 flex justify-center items-center">
 							<h2 className={style['ribbon-title'] + ' text-4xl xl:text-6xl'}>Settings</h2>
@@ -77,7 +77,7 @@ export function PostGame() {
 				{
 					content === 'about' ? <>
 						<div className="col-span-1 row-span-1 flex justify-center items-center">
-							<span className="underline cursor-pointer" onClick={() => { setContent('idle') }}>{'< '}Back to stat</span>
+							<span className="text-white underline cursor-pointer" onClick={() => { setContent('idle') }}>{'< '}Back to stat</span>
 						</div>
 						<div className="col-start-2 col-span-2 row-start-1 row-span-1 flex justify-center items-center">
 							<h2 className={style['ribbon-title'] + ' text-4xl xl:text-6xl'}>About</h2>

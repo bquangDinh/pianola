@@ -13,7 +13,7 @@ export class MIDIController extends MIDIInputable {
     // WebMidi.outputs.forEach((output) => console.log("[OUTPUT]", output.name));
 
     if (WebMidi.inputs.length === 0) {
-      console.warn(
+      alert(
         "No MIDI input found! Turn on the piano and refresh the page again"
       );
       return;
