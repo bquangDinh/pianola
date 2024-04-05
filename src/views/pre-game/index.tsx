@@ -97,9 +97,8 @@ export function PreGame() {
 							</p>
 							<br></br>
 							<p>
-								It has a few options to play with. You can practice notes on any scales you want, you can revert its motion, you can accelerate or deccelerate its speed for easy-or-challenging practice.
-								You can practice on Treble Clef or Bass Clef (the option for both clefs isn't supported). One thing for sure is that you need to connect your piano to your computer. And I haven't had time to finish the mobile version of this (I have the design prototype though)
-								so you may need a separate monitor attached somewhere in front of you or whatever.
+								It has a few options to play with. You need to connect your piano to your computer. And I haven't had time to finish the mobile version of this (I have the design prototype though)
+								so you may need a separate monitor attached somewhere in front of you or whatever. Use the last key--C8 on the piano to end your practice
 							</p>
 							<br></br>
 							<p>
