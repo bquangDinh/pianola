@@ -7,6 +7,7 @@ import { MIDIInputable, MIDI_EVENTS } from "./midi-inputable";
 import { MockMidiController } from "./keyboard-controller";
 import { AppConfigs, MIDIControllers } from "@src/configs/app.config";
 import { MidiController } from "./midi-controller";
+import { FlashEffect } from "./flash";
 
 export const GAME_EVENTS = {
   /* Game Events */
@@ -23,6 +24,8 @@ export class Game extends EventEmitter {
       : MockMidiController;
 
   private notesManager: NotesManager;
+
+  private flashEffect: FlashEffect
 
   private _canvas: HTMLCanvasElement;
 
@@ -59,6 +62,8 @@ export class Game extends EventEmitter {
     this.ctx.imageSmoothingQuality = "high";
 
     this.notesManager = new NotesManager(this);
+
+    this.flashEffect = new FlashEffect(this)
   }
 
   public get initialized() {
@@ -85,6 +90,8 @@ export class Game extends EventEmitter {
       this.onMissedNote.bind(this)
     );
 
+    this.flashEffect.init()
+
     // Init Game Objects
     this.initGameObjects();
 
@@ -102,7 +109,7 @@ export class Game extends EventEmitter {
 
     staff.init();
 
-    this.gameObjects.push(staff, this.notesManager);
+    this.gameObjects.push(staff, this.notesManager, this.flashEffect);
   }
 
   private onMidiNoteOn(hitNote: string) {
@@ -130,15 +137,14 @@ export class Game extends EventEmitter {
   }
 
   private onHitNote(note: string) {
-    const totalTravelTime =
-      this.canvas.width / this.notesManager.getNote().getSpeed();
-
-    const timing = this.notesManager.hitTime / totalTravelTime;
+    const timing = this.notesManager.hitTime;
 
     this.emit(GAME_EVENTS.GOT_POINT, note, timing);
   }
 
   private onMissedNote(note: string) {
+    this.flashEffect.activateFlash()
+
     this.emit(GAME_EVENTS.MISSED_POINT, note);
   }
 
@@ -151,6 +157,8 @@ export class Game extends EventEmitter {
     const draw = (currentTime: number) => {
       // Convert time to seconds
       currentTime *= 0.001;
+
+      if (previousTime === 0) previousTime = currentTime
 
       deltaTime = currentTime - previousTime;
 

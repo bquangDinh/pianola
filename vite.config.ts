@@ -9,6 +9,7 @@ export default defineConfig({
   plugins: [react(), svgr(), removeConsole(), createHtmlPlugin({
 	minify: true
   })],
+  base: './',
   resolve: {
     alias: {
       "@src": "/src",

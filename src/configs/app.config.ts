@@ -7,10 +7,9 @@ export enum MIDIControllers {
 
 export const AppConfigs = {
   midiController:
-    String(import.meta.env.VITE_MIDI_CONTROLLER_INPUT).toLowerCase() ===
-    "keyboard"
-      ? MIDIControllers.KEYBOARD
-      : MIDIControllers.PIANO,
+    import.meta.env.MODE === "production"
+    ? MIDIControllers.PIANO
+    : (import.meta.env.VITE_MIDI_CONTROLLER_DEV_INPUT && import.meta.env.VITE_MIDI_CONTROLLER_DEV_INPUT === 'piano' ? MIDIControllers.PIANO : MIDIControllers.KEYBOARD),
   trebleRangeStart:
     import.meta.env.VITE_TREBLE_RANGE_START &&
     !isNaN(import.meta.env.VITE_TREBLE_RANGE_START)

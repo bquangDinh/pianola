@@ -7,6 +7,7 @@ import { GameStatuses } from "@src/store/game-state";
 
 export function InGame() {
 	const MAX_PANE_WIDTH = document.body.clientWidth / 2 - 100;
+	const DEFAULT_PANE_WIDTH = document.body.clientWidth / 4;
 
 	const {
 		increaseHitsCount,
@@ -44,7 +45,7 @@ export function InGame() {
 
 			return state;
 		},
-		leftPanelWidth === 0 ? document.body.clientWidth / 2 - 100 : leftPanelWidth
+		leftPanelWidth === 0 ? DEFAULT_PANE_WIDTH : leftPanelWidth
 	);
 
 	const [rightPaneWidth, handleMouseMoveRightPane] = useReducer(
@@ -65,7 +66,7 @@ export function InGame() {
 
 			return state;
 		},
-		rightPanelWidth === 0 ? document.body.clientWidth / 2 - 100 : rightPanelWidth
+		rightPanelWidth === 0 ? DEFAULT_PANE_WIDTH : rightPanelWidth
 	);
 
 	const leftContainerRef = useRef<HTMLDivElement>(null);
@@ -167,19 +168,23 @@ export function InGame() {
 			setStatus(GameStatuses.ENDED);
 		}
 
-		if (!gameRef.current && gameCanvasRef.current) {
-			gameRef.current = new Game(gameCanvasRef.current);
-
-			gameRef.current.init();
-
-			gameRef.current.on(GAME_EVENTS.GOT_POINT, onGameHitPoint)
-
-			gameRef.current.on(GAME_EVENTS.MISSED_POINT, onGameMissedPoint)
-
-			gameRef.current.on(GAME_EVENTS.ENDGAME, onEndGame)
-
-			gameRef.current.run();
+		const initGame = () => {
+			if (!gameRef.current && gameCanvasRef.current) {
+				gameRef.current = new Game(gameCanvasRef.current);
+	
+				gameRef.current.init();
+	
+				gameRef.current.on(GAME_EVENTS.GOT_POINT, onGameHitPoint)
+	
+				gameRef.current.on(GAME_EVENTS.MISSED_POINT, onGameMissedPoint)
+	
+				gameRef.current.on(GAME_EVENTS.ENDGAME, onEndGame)
+	
+				gameRef.current.run();
+			}
 		}
+
+		initGame()
 
 		return () => {
 			if (gameRef.current) {

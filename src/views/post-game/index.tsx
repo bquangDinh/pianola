@@ -82,7 +82,7 @@ export function PostGame() {
 						<div className="col-start-2 col-span-2 row-start-1 row-span-1 flex justify-center items-center">
 							<h2 className={style['ribbon-title'] + ' text-4xl xl:text-6xl'}>About</h2>
 						</div>
-						<div className='col-start-1 col-span-3 row-start-2 row-span-3 px-5 text-sm xl:text-lg' style={{ color: '#F2F2F2' }}>
+						<div className='col-start-1 col-span-3 row-start-2 row-span-3 px-5 text-sm xl:text-base' style={{ color: '#F2F2F2' }}>
 							<p>
 								The primary goal of this project is pretty simple and straightforward {'('} at least for me {')'} that is "spamming" practicing sight-read musical notes as many times as possible.
 							</p>

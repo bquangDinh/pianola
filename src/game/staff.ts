@@ -30,7 +30,7 @@ export class Staff extends GameObject {
 
       ctx.lineWidth = 2;
 
-      ctx.strokeStyle = "#C5C5C5";
+      ctx.strokeStyle = "#6D6E6E";
 
       // Stroke it (Do the Drawing)
       ctx.stroke();

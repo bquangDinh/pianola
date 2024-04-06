@@ -71,13 +71,13 @@ export function PostGameStat() {
 
 	return <div className={style['poststat-container']}>
 		<div className='float-left h-full flex justify-center flex-col'>
-			<div className={style['performance-stats-container'] + ' grid grid-cols-2'}>
+			<div className={style['performance-stats-container'] + 'w-full grid grid-cols-3'}>
 				<div className='col-span-1'>
 					<span className={style['stat-text'] + ' text-xl'}>Hits/Misses</span>
 					<br></br>
 					<span className={style['stat-text'] + ' text-6xl'}>{hitsCount}/{missesCount}</span>
 				</div>
-				<div className='col-start-2 col-span-1'>
+				<div className='col-start-3 col-span-1'>
 					<span className={style['stat-text'] + ' text-xl'}>Average Timing</span>
 					<br></br>
 					<span className={style['stat-text'] + ' text-6xl'}>{averageTiming ? averageTiming.toFixed(2) : -1}</span>

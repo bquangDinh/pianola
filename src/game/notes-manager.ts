@@ -63,10 +63,15 @@ export class NotesManager extends GameObject {
   }
 
   public render(dt: number) {
-    this.note.render(dt);
+    // If ready
+    if (this.currentNoteConfig) {
+      this.note.render(dt);
+    }
   }
 
   public update(dt: number) {
+    if (!this.currentNoteConfig) return
+
     this.note.update(dt);
 
     this._hitTime += dt;
