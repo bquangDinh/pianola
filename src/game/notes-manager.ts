@@ -71,6 +71,15 @@ export class NotesManager extends GameObject {
 
   public init() {
     // this.note.init();
+
+    // Spawn the first note
+    const note = new Note(this.game)
+
+    note.init()
+
+    this.resetNote(note)
+
+    this.notes.push(note)
   }
 
   public render(dt: number) {
