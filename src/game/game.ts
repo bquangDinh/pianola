@@ -146,11 +146,13 @@ export class Game extends EventEmitter {
     if (!n) return
 
     const timing = n.hitTime
-    
+
     this.emit(GAME_EVENTS.GOT_POINT, note, timing);
   }
 
-  private onMissedNote(note: string) {
+  private onMissedNote(note: string | null) {
+    if (!note) return
+    
     this.flashEffect.activateFlash()
 
     this.emit(GAME_EVENTS.MISSED_POINT, note);

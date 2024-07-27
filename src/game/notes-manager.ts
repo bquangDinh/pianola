@@ -109,7 +109,12 @@ export class NotesManager extends GameObject {
 
       if (this.revertMotion) {
         if (note.x >= rect.width) {
-          this.emit(NotesManagerEvents.NOTE_HIT_ENDPOINT, this.currentNoteStr);
+          if (!note.active) {
+            // Note has been pressed
+
+          }
+
+          this.emit(NotesManagerEvents.NOTE_HIT_ENDPOINT, note.active ? this.currentNoteStr : null);
   
           this.notes.splice(i, 1)
 
@@ -117,7 +122,7 @@ export class NotesManager extends GameObject {
         }
       } else {
         if (note.x <= -Note.STAVE_WIDTH) {
-          this.emit(NotesManagerEvents.NOTE_HIT_ENDPOINT, this.currentNoteStr);
+          this.emit(NotesManagerEvents.NOTE_HIT_ENDPOINT, note.active ? this.currentNoteStr : null);
 
           this.notes.splice(i, 1)
 
