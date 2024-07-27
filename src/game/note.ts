@@ -19,6 +19,12 @@ export interface NoteConfig {
   stem?: "up" | "down";
 }
 
+export enum INACTIVE_RECT {
+  NONE,
+  HIT,
+  MISSED
+}
+
 export class Note extends GameObject {
   protected _id = "note";
 
@@ -31,9 +37,8 @@ export class Note extends GameObject {
   public active = false
 
   public hitTime = 0
-  
-  // ???
-  currentTime = 0;
+
+  public drawRect: INACTIVE_RECT = INACTIVE_RECT.NONE
 
   formatter: Formatter = new Formatter();
 
@@ -130,8 +135,6 @@ export class Note extends GameObject {
       time,
     });
 
-    console.log(this.noteConfig);
-
     this.formatter
       .joinVoices([this.voice])
       .format([this.voice], Note.STAVE_WIDTH);
@@ -151,6 +154,23 @@ export class Note extends GameObject {
     // this.stave.draw()
 
     this.voice.draw(this.vexflowCtx, this.stave);
+    
+    if (this.drawRect !== INACTIVE_RECT.NONE) {
+      this.drawDeactiveRect()
+    }
+  }
+
+  private drawDeactiveRect() {
+    const ctx = this.game.canvas.getContext('2d')
+
+    if (!ctx) return
+
+    ctx.strokeStyle = this.drawRect === INACTIVE_RECT.HIT ? 'green' : 'red'
+
+    ctx.strokeRect(this.x, this.y, 10, 10)
+
+    // reset stroke style
+    ctx.strokeStyle = 'black'
   }
 
   public update(dt: number): void | Promise<void> {

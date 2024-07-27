@@ -8,6 +8,7 @@ import { MockMidiController } from "./keyboard-controller";
 import { AppConfigs, MIDIControllers } from "@src/configs/app.config";
 import { MidiController } from "./midi-controller";
 import { FlashEffect } from "./flash";
+import { INACTIVE_RECT } from "./note";
 
 export const GAME_EVENTS = {
   /* Game Events */
@@ -145,6 +146,8 @@ export class Game extends EventEmitter {
 
     if (!n) return
 
+    n.drawRect = INACTIVE_RECT.HIT
+
     const timing = n.hitTime
 
     this.emit(GAME_EVENTS.GOT_POINT, note, timing);
@@ -152,7 +155,13 @@ export class Game extends EventEmitter {
 
   private onMissedNote(note: string | null) {
     if (!note) return
-    
+
+    const n = this.notesManager.getFirstActiveNote();
+
+    if (!n) return
+
+    n.drawRect = INACTIVE_RECT.MISSED
+
     this.flashEffect.activateFlash()
 
     this.emit(GAME_EVENTS.MISSED_POINT, note);
