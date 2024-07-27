@@ -28,6 +28,11 @@ export class Note extends GameObject {
 
   public speedFactor = 1;
 
+  public active = false
+
+  public hitTime = 0
+  
+  // ???
   currentTime = 0;
 
   formatter: Formatter = new Formatter();

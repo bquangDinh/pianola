@@ -120,7 +120,11 @@ export class Game extends EventEmitter {
 
     const note = this.notesManager.currentNoteStr;
 
+    const activeNote = this.notesManager.getFirstActiveNote()
+
     if (!note) return;
+
+    if (!activeNote) return
 
     if (this.compareTwoNotes(note, hitNote)) {
       this.onHitNote(note);
@@ -128,7 +132,7 @@ export class Game extends EventEmitter {
       this.onMissedNote(note);
     }
 
-    this.notesManager.resetNote();
+    activeNote.active = false
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -137,8 +141,12 @@ export class Game extends EventEmitter {
   }
 
   private onHitNote(note: string) {
-    const timing = this.notesManager.hitTime;
+    const n = this.notesManager.getFirstActiveNote();
 
+    if (!n) return
+
+    const timing = n.hitTime
+    
     this.emit(GAME_EVENTS.GOT_POINT, note, timing);
   }
 

@@ -14,94 +14,177 @@ export const NotesManagerEvents = {
 export class NotesManager extends GameObject {
   protected _id = "note-manager";
 
-  private note: Note;
+  private readonly ELAPSED = 1
 
-  private _currentNoteConfig: NoteConfig | null = null;
+  // private note: Note;
 
-  private _hitTime = 0;
+  private notes: Note[] = []
+
+  // private _currentNoteConfig: NoteConfig | null = null;
+
+  private elapsedTime = 0;
 
   private revertMotion = false;
 
   constructor(game: Game) {
     super(game);
 
-    this.note = new Note(game);
+    // this.note = new Note(game);
   }
 
-  public get currentNoteConfig() {
-    return this._currentNoteConfig;
-  }
+  // public get currentNoteConfig() {
+  //   return this._currentNoteConfig;
+  // }
 
   public get currentNoteStr() {
-    const currentNoteConfig = this.currentNoteConfig;
+    const firstActiveNote = this.getFirstActiveNote()
 
-    if (!currentNoteConfig) return;
+    if (!firstActiveNote) return
 
-    const note = currentNoteConfig.note.split("/")[0];
+    const noteConfig = firstActiveNote.noteConfig
+
+    if (!noteConfig) return;
+
+    const note = noteConfig.note.split("/")[0];
 
     if (!note || note === "") {
       throw new Error(
-        `Note config is not valid. Note: ${currentNoteConfig.note}`
+        `Note config is not valid. Note: ${noteConfig.note}`
       );
     }
 
     return note;
   }
 
-  public get hitTime() {
-    return this._hitTime;
-  }
+  // public getNote() {
+  //   return this.note;
+  // }
 
-  public getNote() {
-    return this.note;
+  // Return the first note that is active in the array
+  public getFirstActiveNote() {
+    for (const note of this.notes) {
+      if (note.active) return note
+    }
+
+    return null
   }
 
   public init() {
-    this.note.init();
-
-    this.resetNote();
+    // this.note.init();
   }
 
   public render(dt: number) {
-    // If ready
-    if (this.currentNoteConfig) {
-      this.note.render(dt);
+    for (const note of this.notes) {
+      note.render(dt)
     }
   }
 
   public update(dt: number) {
-    if (!this.currentNoteConfig) return
+    // if (!this.currentNoteConfig) return
 
-    this.note.update(dt);
+    this.elapsedTime += dt;
 
-    this._hitTime += dt;
+    // Make each note moves one after another for each "elapsed" time
+    if (this.elapsedTime >= this.ELAPSED) {
+      // reset elapsed time
+      this.elapsedTime = 0;
 
-    const rect = this.game.canvas.getBoundingClientRect();
+      // Spawn new note
+      const note = new Note(this.game)
 
-    if (this.revertMotion) {
-      if (this.note.x >= rect.width) {
-        this.emit(NotesManagerEvents.NOTE_HIT_ENDPOINT, this.currentNoteStr);
+      note.init()
 
-        this.resetNote();
+      this.resetNote(note)
+
+      this.notes.push(note)
+    }
+
+    // Update note
+    for (let i = this.notes.length - 1; i >= 0; --i) {
+      const note = this.notes[i]
+
+      note.update(dt)
+
+      const rect = this.game.canvas.getBoundingClientRect();
+
+      if (this.revertMotion) {
+        if (note.x >= rect.width) {
+          this.emit(NotesManagerEvents.NOTE_HIT_ENDPOINT, this.currentNoteStr);
+  
+          this.notes.splice(i, 1)
+
+          return
+        }
+      } else {
+        if (note.x <= -Note.STAVE_WIDTH) {
+          this.emit(NotesManagerEvents.NOTE_HIT_ENDPOINT, this.currentNoteStr);
+
+          this.notes.splice(i, 1)
+
+          return
+        }
       }
-    } else {
-      if (this.note.x <= -Note.STAVE_WIDTH) {
-        this.emit(NotesManagerEvents.NOTE_HIT_ENDPOINT, this.currentNoteStr);
 
-        this.resetNote();
-      }
+      note.hitTime += dt
     }
   }
 
-  public resetNote() {
-    this.updateNote();
+  // public resetAllNotes() {
+  //   for (const note of this.notes) {
+  //     this.resetNote(note)
+  //   }
+  // }
 
-    this.resetNotePos();
+  public resetNote(note: Note) {
+    this.updateNote(note);
 
-    this._hitTime = 0;
+    this.resetNotePos(note);
+
+    note.active = true
+
+    note.hitTime = 0
   }
 
-  private updateNote() {
+  // private updateNote() {
+  //   const { scaleIndex, speedFactor, clef, revertMotion } =
+  //     useBoundStore.getState();
+
+  //   if (scaleIndex < 0 || scaleIndex >= SCALES.length) {
+  //     throw new Error("Scale Index is not supposed to be out of bound");
+  //   }
+
+  //   const scale = SCALES_CONFIG[SCALES[scaleIndex]];
+
+  //   if (typeof scale === "undefined" || scale === null) {
+  //     throw new Error("Scale is not defined");
+  //   }
+
+  //   const noteConfig = this.generateNoteConfig(scale, clef);
+
+  //   this.note.speedFactor = speedFactor;
+
+  //   this.note.setNoteConfig({
+  //     ...noteConfig,
+  //   });
+
+  //   this.note.setRevertMotion(revertMotion);
+
+  //   this.revertMotion = revertMotion;
+
+  //   this._currentNoteConfig = noteConfig;
+  // }
+
+  // private resetNotePos() {
+  //   const rect = this.game.canvas.getBoundingClientRect();
+
+  //   if (this.revertMotion) {
+  //     this.note.setPosition(-Note.STAVE_WIDTH, rect.height / 2 - 60);
+  //   } else {
+  //     this.note.setPosition(rect.width, rect.height / 2 - 60);
+  //   }
+  // }
+
+  private updateNote(note: Note) {
     const { scaleIndex, speedFactor, clef, revertMotion } =
       useBoundStore.getState();
 
@@ -117,27 +200,32 @@ export class NotesManager extends GameObject {
 
     const noteConfig = this.generateNoteConfig(scale, clef);
 
-    this.note.speedFactor = speedFactor;
+    note.speedFactor = speedFactor;
 
-    this.note.setNoteConfig({
+    note.setNoteConfig({
       ...noteConfig,
     });
 
-    this.note.setRevertMotion(revertMotion);
+    note.setRevertMotion(revertMotion);
 
+    // ???
     this.revertMotion = revertMotion;
 
-    this._currentNoteConfig = noteConfig;
+    // this._currentNoteConfig = noteConfig;
+
+    return note
   }
 
-  private resetNotePos() {
+  private resetNotePos(note: Note) {
     const rect = this.game.canvas.getBoundingClientRect();
 
     if (this.revertMotion) {
-      this.note.setPosition(-Note.STAVE_WIDTH, rect.height / 2 - 60);
+      note.setPosition(-Note.STAVE_WIDTH, rect.height / 2 - 60);
     } else {
-      this.note.setPosition(rect.width, rect.height / 2 - 60);
+      note.setPosition(rect.width, rect.height / 2 - 60);
     }
+
+    return note
   }
 
   private generateNoteConfig(scaleConfig: string, clef: CLEFS): NoteConfig {
@@ -168,6 +256,8 @@ export class NotesManager extends GameObject {
   public destroy() {
     this.removeAllListeners();
 
-    this.note.destroy();
+    for (const note of this.notes) {
+      note.destroy()
+    }
   }
 }
